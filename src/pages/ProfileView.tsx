@@ -34,11 +34,11 @@ interface UsageRecord {
 }
 
 const MODEL_USAGES: ModelUsage[] = [
-  { model: "Gemini 3 Flash", used: 128500, limit: 500000, color: "bg-blue-500" },
-  { model: "GPT-4o", used: 76200, limit: 200000, color: "bg-emerald-500" },
-  { model: "Claude 3.5 Sonnet", used: 45800, limit: 150000, color: "bg-violet-500" },
-  { model: "DeepSeek V3", used: 210300, limit: 1000000, color: "bg-amber-500" },
-  { model: "Qwen 3", used: 32100, limit: 300000, color: "bg-rose-500" },
+  { model: "Gemini 3 Flash", used: 128500, limit: 500000, color: "bg-chart-1" },
+  { model: "GPT-4o", used: 76200, limit: 200000, color: "bg-chart-2" },
+  { model: "Claude 3.5 Sonnet", used: 45800, limit: 150000, color: "bg-chart-3" },
+  { model: "DeepSeek V3", used: 210300, limit: 1000000, color: "bg-chart-4" },
+  { model: "Qwen 3", used: 32100, limit: 300000, color: "bg-chart-5" },
 ];
 
 const RECENT_RECORDS: UsageRecord[] = [
