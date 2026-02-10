@@ -99,6 +99,13 @@ export function AppSidebar({ activeView, onNavigate }: AppSidebarProps) {
       {/* Bottom */}
       <div className="px-3 pb-4 space-y-1 border-t border-border pt-3">
         <button
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+        >
+          {theme === "dark" ? <Sun className="h-4 w-4 shrink-0" /> : <Moon className="h-4 w-4 shrink-0" />}
+          {!collapsed && <span>{theme === "dark" ? "浅色模式" : "深色模式"}</span>}
+        </button>
+        <button
           onClick={() => onNavigate("settings")}
           className={cn(
             "flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm transition-colors",
