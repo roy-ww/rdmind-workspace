@@ -6,6 +6,7 @@ import {
   Search,
   ChevronDown,
   ArrowRight,
+  ExternalLink,
 } from "lucide-react";
 import {
   Collapsible,
@@ -19,6 +20,11 @@ export interface ChatMessage {
   toolName?: string;
   toolResult?: string;
   toolDetail?: string;
+  /** Optional resource link attached to this message */
+  resourceLink?: {
+    title: string;
+    content: string;
+  };
 }
 
 function ToolCallBlock({ msg }: { msg: ChatMessage }) {
@@ -52,10 +58,11 @@ function ToolCallBlock({ msg }: { msg: ChatMessage }) {
 interface AIChatMessagesProps {
   messages: ChatMessage[];
   isLoading?: boolean;
+  onResourceClick?: (title: string, content: string) => void;
 }
 
 export const AIChatMessages = forwardRef<HTMLDivElement, AIChatMessagesProps>(
-  ({ messages, isLoading }, ref) => {
+  ({ messages, isLoading, onResourceClick }, ref) => {
     if (messages.length === 0) {
       return (
         <div className="space-y-3">
@@ -108,8 +115,19 @@ export const AIChatMessages = forwardRef<HTMLDivElement, AIChatMessagesProps>(
           }
           return (
             <div key={i} className="flex justify-start">
-              <div className="max-w-[95%] rounded-2xl rounded-bl-sm px-4 py-3 bg-muted text-foreground text-sm leading-relaxed prose prose-sm prose-neutral dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              <div className="max-w-[95%]">
+                <div className="rounded-2xl rounded-bl-sm px-4 py-3 bg-muted text-foreground text-sm leading-relaxed prose prose-sm prose-neutral dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                </div>
+                {msg.resourceLink && onResourceClick && (
+                  <button
+                    onClick={() => onResourceClick(msg.resourceLink!.title, msg.resourceLink!.content)}
+                    className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-border bg-card text-xs text-primary hover:bg-accent hover:text-foreground transition-colors"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                    <span>{msg.resourceLink.title}</span>
+                  </button>
+                )}
               </div>
             </div>
           );
