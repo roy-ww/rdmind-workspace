@@ -149,7 +149,7 @@ export function TemplateCreator({ open, onOpenChange, onCreated }: TemplateCreat
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[960px] p-0 gap-0 flex flex-col max-h-[85vh]">
+      <DialogContent className="sm:max-w-[960px] p-0 gap-0 flex flex-col max-h-[85vh] [&>button:last-child]:hidden">
         {/* Stepper */}
         <div className="flex items-center justify-center gap-4 py-4 border-b border-border shrink-0 relative">
           <div className="flex items-center gap-2">
@@ -193,26 +193,26 @@ export function TemplateCreator({ open, onOpenChange, onCreated }: TemplateCreat
                 </div>
                 <div className="flex-1 px-6 pb-2 min-h-0 flex flex-col">
                   <div className="flex-1 relative rounded-lg border border-border bg-card overflow-hidden flex flex-col">
-                    {/* Preview overlay for highlighting */}
-                    <div className="flex-1 relative">
+                    {/* WYSIWYG editor with highlight overlay */}
+                    <div className="flex-1 relative min-h-[200px]">
+                      {/* Highlight layer (behind) */}
+                      <div
+                        className="absolute inset-0 p-4 text-sm leading-relaxed whitespace-pre-wrap break-words font-mono pointer-events-none overflow-auto"
+                        aria-hidden="true"
+                      >
+                        {promptText ? <HighlightedText text={promptText} /> : null}
+                      </div>
+                      {/* Transparent textarea (front) */}
                       <textarea
                         ref={textareaRef}
                         value={promptText}
                         onChange={(e) => handleTextChange(e.target.value)}
                         placeholder="在此输入模板内容，使用 {参数名} 标记可变参数..."
-                        className="w-full h-full resize-none border-0 bg-transparent p-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0 font-mono"
+                        className="w-full h-full resize-none border-0 bg-transparent p-4 text-sm text-transparent caret-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0 font-mono relative z-10"
+                        style={{ caretColor: 'var(--foreground)' }}
                         maxLength={30000}
                       />
                     </div>
-                    {/* Highlighted preview */}
-                    {promptText && (
-                      <div className="px-4 pb-3 border-t border-border/50 pt-2">
-                        <p className="text-xs text-muted-foreground mb-1">预览：</p>
-                        <div className="text-sm leading-relaxed whitespace-pre-wrap">
-                          <HighlightedText text={promptText} />
-                        </div>
-                      </div>
-                    )}
                     {/* Bottom bar */}
                     <div className="flex items-center justify-between px-4 py-2 border-t border-border/50 shrink-0">
                       <div className="flex items-center gap-2">
@@ -240,7 +240,7 @@ export function TemplateCreator({ open, onOpenChange, onCreated }: TemplateCreat
               </div>
 
               {/* Right: Params */}
-              <div className="w-72 flex flex-col shrink-0">
+              <div className="w-72 flex flex-col shrink-0 overflow-hidden">
                 <div className="px-5 pt-5 pb-3">
                   <h3 className="text-base font-bold text-foreground mb-1">参数配置</h3>
                   <p className="text-xs text-muted-foreground">
@@ -263,18 +263,18 @@ export function TemplateCreator({ open, onOpenChange, onCreated }: TemplateCreat
                     <div className="space-y-3">
                       {params.map((param) => (
                         <div key={param.name} className="rounded-lg border border-border bg-card p-3">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5">
                             <input
                               readOnly
                               value={param.name}
-                              className="flex-1 px-2.5 py-1.5 rounded-md border border-border bg-background text-sm text-foreground"
+                              className="flex-1 min-w-0 px-2.5 py-1.5 rounded-md border border-border bg-background text-sm text-foreground truncate"
                             />
-                            <button className="p-1.5 rounded-md hover:bg-accent text-muted-foreground transition-colors">
+                            <button className="shrink-0 p-1.5 rounded-md hover:bg-accent text-muted-foreground transition-colors">
                               <Settings className="h-3.5 w-3.5" />
                             </button>
                             <button
                               onClick={() => deleteParam(param.name)}
-                              className="p-1.5 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                              className="shrink-0 p-1.5 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>
