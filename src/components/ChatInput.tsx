@@ -93,7 +93,7 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
 
   return (
     <div ref={containerRef} className={cn("relative w-full", !compact && "max-w-2xl mx-auto")}>
-      <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+      <div className="rounded-xl border border-border bg-card shadow-sm">
         {/* Textarea */}
         <div className="relative">
           <textarea
