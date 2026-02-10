@@ -33,15 +33,24 @@ function generateDemoResponse(userText: string): ChatMessage[] {
 
 interface AIChatProps {
   className?: string;
+  externalPrompt?: string;
+  onExternalPromptConsumed?: () => void;
 }
 
-export function AIChat({ className }: AIChatProps) {
+export function AIChat({ className, externalPrompt, onExternalPromptConsumed }: AIChatProps) {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
+
+  useEffect(() => {
+    if (externalPrompt) {
+      handleSend(externalPrompt);
+      onExternalPromptConsumed?.();
+    }
+  }, [externalPrompt]);
 
   const handleSend = (text: string) => {
     const msgs = generateDemoResponse(text);
