@@ -93,8 +93,8 @@
     --ring: 220 8% 45%;
     --sidebar-background: 222 47% 8%;
     --sidebar-foreground: 248 0.3% 98.4%;
-    --sidebar-primary: 264 24.3% 48.8%;
-    --sidebar-primary-foreground: 248 0.3% 98.4%;
+    --sidebar-primary: 220 8% 70%;
+    --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 260 4.1% 27.9%;
     --sidebar-accent-foreground: 248 0.3% 98.4%;
     --sidebar-border: 0 0% 100% / 10%;
