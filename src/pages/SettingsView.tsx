@@ -12,6 +12,8 @@ import {
   FileText,
   Search,
   Globe,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -22,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/hooks/use-theme";
 
 const LLM_OPTIONS = [
   { value: "gemini-3-flash", label: "Gemini 3 Flash" },
