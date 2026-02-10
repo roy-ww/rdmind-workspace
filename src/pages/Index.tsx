@@ -3,6 +3,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { DashboardView } from "@/pages/DashboardView";
 import { KnowledgeBaseView } from "@/pages/KnowledgeBaseView";
 import { DevWorkbenchView } from "@/pages/DevWorkbenchView";
+import { AIChatView } from "@/pages/AIChatView";
 
 const Index = () => {
   const [activeView, setActiveView] = useState("qa");
@@ -12,9 +13,10 @@ const Index = () => {
       <AppSidebar activeView={activeView} onNavigate={setActiveView} />
       <main className="flex-1 flex min-h-0">
         {activeView === "qa" && <DashboardView />}
+        {activeView === "chat" && <AIChatView />}
         {activeView === "knowledge" && <KnowledgeBaseView />}
         {activeView === "dev" && <DevWorkbenchView />}
-        {activeView !== "qa" && activeView !== "knowledge" && activeView !== "dev" && (
+        {activeView !== "qa" && activeView !== "chat" && activeView !== "knowledge" && activeView !== "dev" && (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center space-y-2">
               <h2 className="text-lg font-semibold text-foreground">即将推出</h2>
