@@ -5,6 +5,7 @@ import { KnowledgeBaseView } from "@/pages/KnowledgeBaseView";
 import { DevWorkbenchView } from "@/pages/DevWorkbenchView";
 import { AIChatView } from "@/pages/AIChatView";
 import { AIChatView2 } from "@/pages/AIChatView2";
+import { SettingsView } from "@/pages/SettingsView";
 
 const Index = () => {
   const [activeView, setActiveView] = useState("qa");
@@ -18,7 +19,8 @@ const Index = () => {
         {activeView === "chat2" && <AIChatView2 />}
         {activeView === "knowledge" && <KnowledgeBaseView />}
         {activeView === "dev" && <DevWorkbenchView />}
-        {activeView !== "qa" && activeView !== "chat" && activeView !== "chat2" && activeView !== "knowledge" && activeView !== "dev" && (
+        {activeView === "settings" && <SettingsView />}
+        {activeView !== "qa" && activeView !== "chat" && activeView !== "chat2" && activeView !== "knowledge" && activeView !== "dev" && activeView !== "settings" && (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center space-y-2">
               <h2 className="text-lg font-semibold text-foreground">即将推出</h2>
