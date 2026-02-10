@@ -622,7 +622,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function Ch
                 <ChevronDown className="h-3 w-3" />
               </button>
               {showModelDropdown && (
-                <div className="absolute bottom-full left-0 mb-1 z-50 bg-popover border border-border rounded-lg shadow-lg w-44 py-0.5">
+                <div className="absolute bottom-full left-0 mb-1 z-50 bg-popover border border-border rounded-lg shadow-lg w-44 py-0.5 max-h-48 overflow-y-auto">
                   {models.map((model) => (
                     <button
                       key={model.id}
