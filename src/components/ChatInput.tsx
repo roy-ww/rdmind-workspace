@@ -42,10 +42,11 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
   const [selectedModel, setSelectedModel] = useState(models[0]);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [showMention, setShowMention] = useState(false);
-  const [mentionPos, setMentionPos] = useState<{ top: number; left: number; flipLeft: boolean }>({ top: 0, left: 0, flipLeft: false });
+  const [mentionStyle, setMentionStyle] = useState<React.CSSProperties>({});
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const mirrorRef = useRef<HTMLDivElement>(null);
+  const mentionMenuRef = useRef<HTMLDivElement>(null);
 
   const getCursorPixelPos = (textarea: HTMLTextAreaElement, pos: number) => {
     if (!mirrorRef.current) return { top: 0, left: 0 };
