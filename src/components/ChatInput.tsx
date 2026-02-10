@@ -211,6 +211,30 @@ function getMentions(el: HTMLDivElement): SelectedMention[] {
   return mentions;
 }
 
+/** Check if text contains template variable syntax */
+function hasTemplateVars(text: string): boolean {
+  return /\{[^}]+\}|\[[^\]]+\]/.test(text);
+}
+
+/** Parse template text and return DOM fragment with special elements */
+function parseTemplateToFragment(text: string): DocumentFragment {
+  const frag = document.createDocumentFragment();
+  const parts = text.split(/(\{[^}]+\}|\[[^\]]+\])/g);
+  parts.forEach((part) => {
+    if (part.startsWith("{") && part.endsWith("}")) {
+      frag.appendChild(createPlaceholderElement(part.slice(1, -1)));
+    } else if (part.startsWith("[") && part.endsWith("]")) {
+      const inner = part.slice(1, -1);
+      const [defaultVal, optionsStr] = inner.split("|");
+      const options = optionsStr ? optionsStr.split(",") : [defaultVal];
+      frag.appendChild(createDropdownElement(defaultVal.trim(), options.map(o => o.trim())));
+    } else if (part) {
+      frag.appendChild(document.createTextNode(part));
+    }
+  });
+  return frag;
+}
+
 export interface ChatInputHandle {
   setContent: (text: string) => void;
   setTemplateContent: (templateName: string, prompt: string) => void;
@@ -236,24 +260,32 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function Ch
   const fillEditorWithTemplate = useCallback((prompt: string) => {
     if (!editorRef.current) return;
     editorRef.current.innerHTML = "";
-    // Parse prompt: split by {placeholder} and [default|opt1,opt2] patterns
-    const parts = prompt.split(/(\{[^}]+\}|\[[^\]]+\])/g);
-    parts.forEach((part) => {
-      if (part.startsWith("{") && part.endsWith("}")) {
-        const placeholder = createPlaceholderElement(part.slice(1, -1));
-        editorRef.current!.appendChild(placeholder);
-      } else if (part.startsWith("[") && part.endsWith("]")) {
-        const inner = part.slice(1, -1);
-        const [defaultVal, optionsStr] = inner.split("|");
-        const options = optionsStr ? optionsStr.split(",") : [defaultVal];
-        const dropdown = createDropdownElement(defaultVal.trim(), options.map(o => o.trim()));
-        editorRef.current!.appendChild(dropdown);
-      } else if (part) {
-        editorRef.current!.appendChild(document.createTextNode(part));
-      }
-    });
+    editorRef.current.appendChild(parseTemplateToFragment(prompt));
     setIsEmpty(false);
     editorRef.current.focus();
+  }, []);
+
+  const handlePaste = useCallback((e: React.ClipboardEvent<HTMLDivElement>) => {
+    const text = e.clipboardData.getData("text/plain");
+    if (text && hasTemplateVars(text)) {
+      e.preventDefault();
+      if (!editorRef.current) return;
+      // Insert parsed template at cursor position
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount > 0) {
+        const range = sel.getRangeAt(0);
+        range.deleteContents();
+        const frag = parseTemplateToFragment(text);
+        range.insertNode(frag);
+        // Move cursor to end of inserted content
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      } else {
+        editorRef.current.appendChild(parseTemplateToFragment(text));
+      }
+      setIsEmpty(false);
+    }
   }, []);
 
   useImperativeHandle(ref, () => ({
@@ -490,6 +522,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function Ch
             suppressContentEditableWarning
             onInput={handleEditorInput}
             onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
             className={cn(
               "w-full border-0 bg-transparent px-4 pt-4 pb-2 text-sm text-foreground focus:outline-none focus:ring-0",
               compact ? "min-h-[3.5rem]" : "min-h-[5rem]",
