@@ -18,21 +18,34 @@ export interface ChatMessage {
   content: string;
   toolName?: string;
   toolResult?: string;
+  toolDetail?: string;
 }
 
 function ToolCallBlock({ msg }: { msg: ChatMessage }) {
   return (
-    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-muted/40 text-xs text-muted-foreground">
-      {msg.toolName === "读取文件" ? (
-        <FileText className="h-3.5 w-3.5 text-primary shrink-0" />
-      ) : (
-        <Search className="h-3.5 w-3.5 text-primary shrink-0" />
+    <Collapsible defaultOpen={false}>
+      <CollapsibleTrigger className="flex items-center gap-2 w-full px-3 py-1.5 rounded-lg border border-border bg-muted/40 text-xs text-muted-foreground hover:bg-muted/60 transition-colors group">
+        {msg.toolName === "读取文件" ? (
+          <FileText className="h-3.5 w-3.5 text-primary shrink-0" />
+        ) : (
+          <Search className="h-3.5 w-3.5 text-primary shrink-0" />
+        )}
+        <span className="font-medium text-foreground">{msg.toolName}</span>
+        <span className="text-muted-foreground">·</span>
+        <span>{msg.content}</span>
+        <span className="ml-auto text-muted-foreground/70 flex items-center gap-1">
+          {msg.toolResult}
+          <ChevronDown className="h-3 w-3 transition-transform group-data-[state=open]:rotate-180" />
+        </span>
+      </CollapsibleTrigger>
+      {msg.toolDetail && (
+        <CollapsibleContent>
+          <div className="mt-1 ml-5 rounded-lg border border-border bg-card p-3 text-xs text-muted-foreground font-mono whitespace-pre-wrap leading-relaxed max-h-48 overflow-auto">
+            {msg.toolDetail}
+          </div>
+        </CollapsibleContent>
       )}
-      <span className="font-medium text-foreground">{msg.toolName}</span>
-      <span className="text-muted-foreground">·</span>
-      <span>{msg.content}</span>
-      <span className="ml-auto text-muted-foreground/70">{msg.toolResult}</span>
-    </div>
+    </Collapsible>
   );
 }
 
