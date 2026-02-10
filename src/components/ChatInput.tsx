@@ -64,34 +64,30 @@ function createPlaceholderElement(text: string): HTMLSpanElement {
   const wrapper = document.createElement("span");
   wrapper.setAttribute(PLACEHOLDER_ATTR, "true");
   wrapper.className =
-    "inline-block relative mx-0.5 align-middle";
+    "inline-flex items-center relative mx-0.5 align-middle";
 
   const editable = document.createElement("span");
   editable.contentEditable = "true";
   editable.className =
-    "inline-block px-2 py-0.5 rounded-md border border-dashed border-muted-foreground/40 text-sm text-foreground min-w-[2em] outline-none focus:border-primary/50 focus:bg-primary/5 transition-colors";
-  editable.style.minWidth = `${Math.max(text.length * 0.75, 2)}em`;
+    "inline-block px-2 py-0.5 rounded-md border border-dashed border-muted-foreground/40 text-sm text-foreground outline-none focus:border-primary/50 focus:bg-primary/5 transition-colors empty:text-transparent";
+  // Use a width that matches the placeholder text length so the box is properly sized
+  const charWidth = 14;
+  editable.style.minWidth = `${Math.max(text.length * charWidth + 16, 40)}px`;
+  editable.style.minHeight = "1.75em";
+  editable.style.lineHeight = "1.75em";
 
-  const placeholder = document.createElement("span");
-  placeholder.className =
-    "absolute left-2 top-1/2 -translate-y-1/2 text-sm text-muted-foreground/60 pointer-events-none select-none whitespace-nowrap";
-  placeholder.textContent = text;
-  placeholder.setAttribute("data-placeholder-text", "true");
+  const placeholderEl = document.createElement("span");
+  placeholderEl.className =
+    "absolute left-2 top-0 bottom-0 flex items-center text-sm text-muted-foreground/50 pointer-events-none select-none whitespace-nowrap";
+  placeholderEl.textContent = text;
+  placeholderEl.setAttribute("data-placeholder-text", "true");
 
   wrapper.appendChild(editable);
-  wrapper.appendChild(placeholder);
+  wrapper.appendChild(placeholderEl);
 
   // Hide placeholder when content exists
   editable.addEventListener("input", () => {
-    placeholder.style.display = editable.textContent?.trim() ? "none" : "";
-  });
-  editable.addEventListener("focus", () => {
-    if (!editable.textContent?.trim()) {
-      placeholder.style.opacity = "0.4";
-    }
-  });
-  editable.addEventListener("blur", () => {
-    placeholder.style.opacity = "";
+    placeholderEl.style.display = editable.textContent?.trim() ? "none" : "";
   });
 
   return wrapper;
