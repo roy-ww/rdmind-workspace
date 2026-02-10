@@ -9,6 +9,14 @@ function generateDemoResponse(userText: string): ChatMessage[] {
   return [
     { type: "user", content: userText },
     {
+      type: "thinking",
+      content: `正在分析用户的问题："${userText}"...\n\n1. 理解用户意图与上下文\n2. 确定需要调用的工具链\n3. 规划多步骤执行方案`,
+    },
+    {
+      type: "ai",
+      content: `好的，我来帮您处理这个问题。我需要先查阅一些相关资料。`,
+    },
+    {
       type: "tool",
       content: "待处理笔记.md",
       toolName: "读取文件",
@@ -21,12 +29,24 @@ function generateDemoResponse(userText: string): ChatMessage[] {
       toolResult: "匹配到 3 篇相关文档",
     },
     {
-      type: "thinking",
-      content: `正在分析用户的问题："${userText}"...\n\n1. 检索知识库中的相关文档\n2. 匹配到 3 篇相关文档\n3. 综合分析文档内容与用户问题的关联性\n4. 生成结构化回答`,
+      type: "tool",
+      content: "周报_2024W22.md",
+      toolName: "读取文件",
+      toolResult: "成功读取，共 58 行",
+    },
+    {
+      type: "tool",
+      content: "技术方案_v2.md",
+      toolName: "语义检索",
+      toolResult: "相关度 0.92，匹配 5 个段落",
     },
     {
       type: "ai",
-      content: `根据您的知识库内容，我为您整理了以下信息：\n\n**核心发现：**\n- 项目当前处于 Q2 开发阶段，核心功能开发进度约 60%\n- 知识库 CRUD 和 Markdown 编辑器已基本完成\n- AI 对话集成模块正在开发中\n\n**建议下一步行动：**\n1. 完善语义检索功能的技术方案\n2. 开始 AI 对话模块的原型开发\n3. 安排一次技术评审会议\n\n如需了解更多细节，请随时提问。`,
+      content: `根据我检索到的资料，为您整理如下：\n\n**核心发现：**\n- 项目当前处于 Q2 开发阶段，核心功能开发进度约 60%\n- 知识库 CRUD 和 Markdown 编辑器已基本完成\n- AI 对话集成模块正在开发中`,
+    },
+    {
+      type: "ai",
+      content: `**建议下一步行动：**\n1. 完善语义检索功能的技术方案\n2. 开始 AI 对话模块的原型开发\n3. 安排一次技术评审会议\n4. 补充单元测试覆盖率至 80% 以上\n\n如需了解更多细节，请随时提问。`,
     },
   ];
 }
@@ -52,9 +72,17 @@ export function AIChat({ className, externalPrompt, onExternalPromptConsumed }: 
     }
   }, [externalPrompt]);
 
-  const handleSend = (text: string) => {
+  const isSendingRef = useRef(false);
+
+  const handleSend = async (text: string) => {
+    if (isSendingRef.current) return;
+    isSendingRef.current = true;
     const msgs = generateDemoResponse(text);
-    setChatMessages((prev) => [...prev, ...msgs]);
+    for (const msg of msgs) {
+      setChatMessages((prev) => [...prev, msg]);
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    isSendingRef.current = false;
   };
 
   const hasMessages = chatMessages.length > 0;
