@@ -184,6 +184,29 @@ export function SettingsView() {
               </div>
             </section>
 
+            {/* Dark Mode Toggle */}
+            <section className="rounded-xl border border-border bg-card p-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    {theme === "dark" ? (
+                      <Moon className="h-4 w-4 text-primary" />
+                    ) : (
+                      <Sun className="h-4 w-4 text-primary" />
+                    )}
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-semibold text-foreground">深色模式</h2>
+                    <p className="text-xs text-muted-foreground">切换应用的明暗主题风格</p>
+                  </div>
+                </div>
+                <Switch
+                  checked={theme === "dark"}
+                  onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+                />
+              </div>
+            </section>
+
             {/* Default Model */}
             <section className="rounded-xl border border-border bg-card p-5 space-y-3">
               <div className="flex items-center gap-2.5">
