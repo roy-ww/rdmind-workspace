@@ -1,0 +1,175 @@
+import { useState, useRef, useEffect } from "react";
+import {
+  Send,
+  Paperclip,
+  Globe,
+  ChevronDown,
+  FileText,
+  Database,
+  Image,
+  Link,
+  BookOpen,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const models = [
+  { id: "kimi-k2.5", label: "kimi-k2.5", desc: "高性能推理" },
+  { id: "gpt-4o", label: "GPT-4o", desc: "多模态理解" },
+  { id: "claude-3.5", label: "Claude 3.5", desc: "长文分析" },
+  { id: "deepseek-v3", label: "DeepSeek V3", desc: "代码专家" },
+  { id: "qwen-max", label: "Qwen-Max", desc: "中文优化" },
+];
+
+const mentionItems = [
+  { id: "file", label: "文件", desc: "引用本地文件", icon: FileText },
+  { id: "knowledge", label: "知识库", desc: "搜索知识库文档", icon: BookOpen },
+  { id: "database", label: "数据库", desc: "查询数据源", icon: Database },
+  { id: "image", label: "图片", desc: "引用图片资源", icon: Image },
+  { id: "url", label: "网页链接", desc: "引用在线内容", icon: Link },
+];
+
+export function ChatInput() {
+  const [value, setValue] = useState("");
+  const [selectedModel, setSelectedModel] = useState(models[0]);
+  const [showModelDropdown, setShowModelDropdown] = useState(false);
+  const [showMention, setShowMention] = useState(false);
+  const [mentionPos, setMentionPos] = useState({ top: 0, left: 0 });
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+
+    // Check for @ trigger
+    const cursorPos = e.target.selectionStart;
+    const textBeforeCursor = newValue.slice(0, cursorPos);
+    const lastAtIndex = textBeforeCursor.lastIndexOf("@");
+
+    if (lastAtIndex !== -1 && (lastAtIndex === 0 || textBeforeCursor[lastAtIndex - 1] === " ")) {
+      const textAfterAt = textBeforeCursor.slice(lastAtIndex + 1);
+      if (!textAfterAt.includes(" ")) {
+        // Calculate position relative to textarea
+        if (containerRef.current) {
+          setMentionPos({ top: -220, left: 20 });
+        }
+        setShowMention(true);
+        return;
+      }
+    }
+    setShowMention(false);
+  };
+
+  const insertMention = (item: (typeof mentionItems)[0]) => {
+    const cursorPos = textareaRef.current?.selectionStart || 0;
+    const textBeforeCursor = value.slice(0, cursorPos);
+    const lastAtIndex = textBeforeCursor.lastIndexOf("@");
+    const newValue =
+      value.slice(0, lastAtIndex) + `@${item.label} ` + value.slice(cursorPos);
+    setValue(newValue);
+    setShowMention(false);
+    textareaRef.current?.focus();
+  };
+
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setShowModelDropdown(false);
+      setShowMention(false);
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={containerRef} className="relative w-full max-w-2xl mx-auto">
+      <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+        {/* Textarea */}
+        <div className="relative">
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={handleInput}
+            placeholder="输入指令，使用 @ 选择资源"
+            rows={3}
+            className="w-full resize-none border-0 bg-transparent px-4 pt-4 pb-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0"
+          />
+
+          {/* @ Mention Dropdown */}
+          {showMention && (
+            <div
+              className="absolute z-50 bg-popover border border-border rounded-lg shadow-lg w-56 py-1"
+              style={{ top: mentionPos.top, left: mentionPos.left }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">
+                选择资源
+              </div>
+              {mentionItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => insertMention(item)}
+                  className="flex items-center gap-3 w-full px-3 py-2 text-sm hover:bg-accent transition-colors"
+                >
+                  <item.icon className="h-4 w-4 text-muted-foreground" />
+                  <div className="text-left">
+                    <div className="text-foreground">{item.label}</div>
+                    <div className="text-xs text-muted-foreground">{item.desc}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Bottom Controls */}
+        <div className="flex items-center justify-between px-3 py-2 border-t border-border/50">
+          <div className="flex items-center gap-1">
+            {/* Model Selector */}
+            <div className="relative" onClick={(e) => e.stopPropagation()}>
+              <button
+                onClick={() => setShowModelDropdown(!showModelDropdown)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-muted-foreground hover:bg-accent transition-colors"
+              >
+                <span>{selectedModel.label}</span>
+                <ChevronDown className="h-3 w-3" />
+              </button>
+              {showModelDropdown && (
+                <div className="absolute bottom-full left-0 mb-1 z-50 bg-popover border border-border rounded-lg shadow-lg w-52 py-1">
+                  {models.map((model) => (
+                    <button
+                      key={model.id}
+                      onClick={() => {
+                        setSelectedModel(model);
+                        setShowModelDropdown(false);
+                      }}
+                      className={cn(
+                        "flex items-center justify-between w-full px-3 py-2 text-sm hover:bg-accent transition-colors",
+                        model.id === selectedModel.id && "text-primary bg-primary/5"
+                      )}
+                    >
+                      <div>
+                        <div className="font-medium">{model.label}</div>
+                        <div className="text-xs text-muted-foreground">{model.desc}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <button className="p-1.5 rounded-md text-muted-foreground hover:bg-accent transition-colors">
+              <Paperclip className="h-4 w-4" />
+            </button>
+            <button className="p-1.5 rounded-md text-muted-foreground hover:bg-accent transition-colors">
+              <Globe className="h-4 w-4" />
+            </button>
+          </div>
+
+          <button className="p-2 rounded-lg brand-gradient text-primary-foreground shadow-sm hover:opacity-90 transition-opacity">
+            <Send className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

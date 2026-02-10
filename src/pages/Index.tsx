@@ -1,12 +1,26 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { AppSidebar } from "@/components/AppSidebar";
+import { DashboardView } from "@/pages/DashboardView";
+import { KnowledgeBaseView } from "@/pages/KnowledgeBaseView";
 
 const Index = () => {
+  const [activeView, setActiveView] = useState("qa");
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="flex min-h-screen w-full bg-background">
+      <AppSidebar activeView={activeView} onNavigate={setActiveView} />
+      <main className="flex-1 flex min-h-0">
+        {activeView === "qa" && <DashboardView />}
+        {activeView === "knowledge" && <KnowledgeBaseView />}
+        {activeView !== "qa" && activeView !== "knowledge" && (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center space-y-2">
+              <h2 className="text-lg font-semibold text-foreground">即将推出</h2>
+              <p className="text-sm text-muted-foreground">此功能正在开发中</p>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 };
