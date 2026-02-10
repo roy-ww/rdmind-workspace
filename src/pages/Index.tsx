@@ -16,7 +16,7 @@ const Index = () => {
         {activeView === "chat" && <AIChatView />}
         {activeView === "knowledge" && <KnowledgeBaseView />}
         {activeView === "dev" && <DevWorkbenchView />}
-        {activeView !== "qa" && activeView !== "knowledge" && activeView !== "dev" && (
+        {activeView !== "qa" && activeView !== "chat" && activeView !== "knowledge" && activeView !== "dev" && (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center space-y-2">
               <h2 className="text-lg font-semibold text-foreground">即将推出</h2>
