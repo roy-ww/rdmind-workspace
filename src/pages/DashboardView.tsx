@@ -12,8 +12,8 @@ export function DashboardView() {
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center overflow-auto">
-      <div className="w-full max-w-3xl mx-auto px-6 py-16 flex flex-col items-center gap-8">
+    <div className="flex-1 flex flex-col items-center h-screen overflow-hidden">
+      <div className="w-full max-w-3xl mx-auto px-6 pt-16 pb-4 flex flex-col items-center gap-8 shrink-0">
         {/* Header */}
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2 mb-2">
@@ -28,8 +28,10 @@ export function DashboardView() {
 
         {/* Quick Actions */}
         <QuickActions />
+      </div>
 
-        {/* Template Gallery */}
+      {/* Template Gallery - scrollable area */}
+      <div className="w-full max-w-3xl mx-auto px-6 pb-8 flex-1 min-h-0 overflow-y-auto">
         <TemplateGallery onSendTemplate={handleSendTemplate} />
       </div>
     </div>
