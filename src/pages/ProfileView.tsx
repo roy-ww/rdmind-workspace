@@ -128,8 +128,8 @@ export function ProfileView() {
           </Card>
           <Card>
             <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-violet-500/10 flex items-center justify-center">
-                <BarChart3 className="h-5 w-5 text-violet-500" />
+              <div className="h-10 w-10 rounded-lg bg-chart-3/15 flex items-center justify-center">
+                <BarChart3 className="h-5 w-5 text-chart-3" />
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">总额度</p>
