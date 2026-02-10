@@ -42,14 +42,35 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
   const [selectedModel, setSelectedModel] = useState(models[0]);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [showMention, setShowMention] = useState(false);
+  const [mentionPos, setMentionPos] = useState<{ top: number; left: number; flipLeft: boolean }>({ top: 0, left: 0, flipLeft: false });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const mirrorRef = useRef<HTMLDivElement>(null);
+
+  const getCursorPixelPos = (textarea: HTMLTextAreaElement, pos: number) => {
+    if (!mirrorRef.current) return { top: 0, left: 0 };
+    const mirror = mirrorRef.current;
+    const style = window.getComputedStyle(textarea);
+    mirror.style.cssText = `
+      position:absolute;visibility:hidden;white-space:pre-wrap;word-wrap:break-word;overflow:hidden;
+      width:${style.width};font:${style.font};padding:${style.padding};border:${style.border};
+      line-height:${style.lineHeight};letter-spacing:${style.letterSpacing};
+    `;
+    const textBefore = textarea.value.slice(0, pos);
+    mirror.textContent = textBefore;
+    const span = document.createElement("span");
+    span.textContent = "|";
+    mirror.appendChild(span);
+    const top = span.offsetTop - textarea.scrollTop;
+    const left = span.offsetLeft;
+    mirror.textContent = "";
+    return { top, left };
+  };
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setValue(newValue);
 
-    // Check for @ trigger
     const cursorPos = e.target.selectionStart;
     const textBeforeCursor = newValue.slice(0, cursorPos);
     const lastAtIndex = textBeforeCursor.lastIndexOf("@");
@@ -57,6 +78,12 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
     if (lastAtIndex !== -1 && (lastAtIndex === 0 || textBeforeCursor[lastAtIndex - 1] === " ")) {
       const textAfterAt = textBeforeCursor.slice(lastAtIndex + 1);
       if (!textAfterAt.includes(" ")) {
+        const pos = getCursorPixelPos(e.target, lastAtIndex);
+        const containerRect = containerRef.current?.getBoundingClientRect();
+        const menuWidth = 210;
+        const spaceRight = containerRect ? containerRect.right - (containerRect.left + pos.left + 16) : 999;
+        const flipLeft = spaceRight < menuWidth;
+        setMentionPos({ top: pos.top, left: pos.left, flipLeft });
         setShowMention(true);
         return;
       }
@@ -114,7 +141,13 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
           {/* @ Mention Dropdown */}
           {showMention && (
             <div
-              className="absolute bottom-full left-4 mb-2 z-50 bg-popover border border-border rounded-lg shadow-lg w-52 py-1 overflow-hidden"
+              className="absolute z-50 bg-popover border border-border rounded-lg shadow-lg w-[210px] py-1 overflow-hidden"
+              style={{
+                top: `${mentionPos.top + 24}px`,
+                ...(mentionPos.flipLeft
+                  ? { right: `calc(100% - ${mentionPos.left + 16}px)` }
+                  : { left: `${mentionPos.left + 16}px` }),
+              }}
               onClick={(e) => e.stopPropagation()}
             >
               {mentionItems.map((item) => (
@@ -130,6 +163,7 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
               ))}
             </div>
           )}
+          <div ref={mirrorRef} aria-hidden="true" />
         </div>
 
         {/* Bottom Controls */}
