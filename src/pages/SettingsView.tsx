@@ -12,6 +12,8 @@ import {
   FileText,
   Search,
   Globe,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -22,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/hooks/use-theme";
 
 const LLM_OPTIONS = [
   { value: "gemini-3-flash", label: "Gemini 3 Flash" },
@@ -63,6 +66,7 @@ export function SettingsView() {
   const [knowledgePath, setKnowledgePath] = useState("/data/knowledge");
   const [showThinking, setShowThinking] = useState(true);
   const [defaultModel, setDefaultModel] = useState("gemini-3-flash");
+  const { theme, setTheme } = useTheme();
 
   // Skills state
   const [skills, setSkills] = useState<Skill[]>(INITIAL_SKILLS);
@@ -177,6 +181,29 @@ export function SettingsView() {
                   </div>
                 </div>
                 <Switch checked={showThinking} onCheckedChange={setShowThinking} />
+              </div>
+            </section>
+
+            {/* Dark Mode Toggle */}
+            <section className="rounded-xl border border-border bg-card p-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-primary/10">
+                    {theme === "dark" ? (
+                      <Moon className="h-4 w-4 text-primary" />
+                    ) : (
+                      <Sun className="h-4 w-4 text-primary" />
+                    )}
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-semibold text-foreground">深色模式</h2>
+                    <p className="text-xs text-muted-foreground">切换应用的明暗主题风格</p>
+                  </div>
+                </div>
+                <Switch
+                  checked={theme === "dark"}
+                  onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+                />
               </div>
             </section>
 
