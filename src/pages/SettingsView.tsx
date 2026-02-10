@@ -66,6 +66,7 @@ export function SettingsView() {
   const [knowledgePath, setKnowledgePath] = useState("/data/knowledge");
   const [showThinking, setShowThinking] = useState(true);
   const [defaultModel, setDefaultModel] = useState("gemini-3-flash");
+  const { theme, setTheme } = useTheme();
 
   // Skills state
   const [skills, setSkills] = useState<Skill[]>(INITIAL_SKILLS);
