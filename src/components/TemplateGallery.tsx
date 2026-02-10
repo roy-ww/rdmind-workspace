@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Star, Search, FileCode, MessageCircle, BarChart3, Mail, Globe, Lightbulb } from "lucide-react";
+import { Star, Search, FileCode, MessageCircle, BarChart3, Mail, Globe, Lightbulb, Plus, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = ["公开模板", "我收藏的", "我创建的"];
@@ -51,6 +51,28 @@ export function TemplateGallery() {
 
       {/* Grid */}
       <div className="grid grid-cols-3 gap-3">
+        {/* Create Card */}
+        <div className="p-4 rounded-xl border-2 border-dashed border-border bg-muted/30 hover:border-primary/30 hover:bg-muted/50 transition-all cursor-pointer flex flex-col justify-between">
+          <div>
+            <h4 className="text-sm font-bold text-foreground mb-1.5 flex items-center gap-1">
+              <Plus className="h-4 w-4" />
+              创建模板
+            </h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              沉淀你的专属指令与经验，提升团队效率。
+            </p>
+          </div>
+          <div className="flex items-center gap-2 mt-4">
+            <button className="px-4 py-1.5 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-accent transition-colors">
+              创建
+            </button>
+            <button className="px-4 py-1.5 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-accent transition-colors inline-flex items-center gap-1">
+              <Upload className="h-3 w-3" />
+              导入
+            </button>
+          </div>
+        </div>
+
         {templates.map((t) => (
           <div
             key={t.title}
