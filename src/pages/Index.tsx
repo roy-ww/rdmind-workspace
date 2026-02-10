@@ -12,7 +12,7 @@ const Index = () => {
   const [activeView, setActiveView] = useState("qa");
 
   return (
-    <div className="flex min-h-screen w-full bg-background">
+    <div className="flex h-screen w-full bg-background overflow-hidden">
       <AppSidebar activeView={activeView} onNavigate={setActiveView} />
       <main className="flex-1 flex min-h-0">
         {activeView === "qa" && <DashboardView />}
