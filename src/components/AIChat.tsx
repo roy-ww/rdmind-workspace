@@ -21,24 +21,28 @@ function generateDemoResponse(userText: string): ChatMessage[] {
       content: "待处理笔记.md",
       toolName: "读取文件",
       toolResult: "成功读取，共 112 行",
+      toolDetail: "# 待处理笔记\n\n## 本周待办\n- [ ] 完成知识库搜索功能优化\n- [ ] 修复 Markdown 编辑器光标问题\n- [x] 对接 AI 对话接口\n- [ ] 编写 Q2 进度报告\n\n## 备注\n技术方案需要在周三前评审完成，\n注意性能优化和边界情况处理。",
     },
     {
       type: "tool",
       content: "项目A_规划.md",
       toolName: "搜索知识库",
       toolResult: "匹配到 3 篇相关文档",
+      toolDetail: "匹配结果：\n1. 项目A_规划.md (相关度 0.95)\n   > 项目目标：构建企业级 AI 知识管理平台...\n2. 项目A_技术选型.md (相关度 0.87)\n   > 前端框架：React + TypeScript...\n3. 项目A_里程碑.md (相关度 0.82)\n   > Q2 里程碑：完成核心功能 MVP...",
     },
     {
       type: "tool",
       content: "周报_2024W22.md",
       toolName: "读取文件",
       toolResult: "成功读取，共 58 行",
+      toolDetail: "# 周报 2024-W22\n\n## 本周完成\n- 知识库 CRUD 接口开发\n- Markdown 编辑器集成\n- 文件树组件重构\n\n## 下周计划\n- AI 对话模块原型\n- 语义检索优化\n- 性能压测",
     },
     {
       type: "tool",
       content: "技术方案_v2.md",
       toolName: "语义检索",
       toolResult: "相关度 0.92，匹配 5 个段落",
+      toolDetail: "匹配段落：\n\n§1 架构概述\n> 系统采用前后端分离架构，前端使用 React...\n\n§2 AI 集成方案\n> 通过 Edge Function 调用大模型 API，支持流式输出...\n\n§3 数据存储\n> 使用向量数据库存储文档 embedding，支持语义搜索...\n\n§4 安全设计\n> 实施 RLS 策略，确保多租户数据隔离...\n\n§5 性能优化\n> 前端采用虚拟滚动、懒加载等策略...",
     },
     {
       type: "ai",
@@ -53,12 +57,14 @@ function generateDemoResponse(userText: string): ChatMessage[] {
       content: "进度跟踪_Q2.xlsx",
       toolName: "读取文件",
       toolResult: "成功读取，共 24 行",
+      toolDetail: "| 模块       | 负责人 | 进度  | 状态   |\n|-----------|--------|-------|--------|\n| 知识库     | 张三   | 85%   | 进行中 |\n| AI 对话    | 李四   | 40%   | 进行中 |\n| 编辑器     | 王五   | 90%   | 收尾中 |\n| 文件管理   | 赵六   | 70%   | 进行中 |",
     },
     {
       type: "tool",
       content: "团队成员_任务分配.md",
       toolName: "搜索知识库",
       toolResult: "匹配到 2 篇相关文档",
+      toolDetail: "匹配结果：\n1. 团队成员_任务分配.md (相关度 0.91)\n   > 张三 - 知识库模块 / 李四 - AI 对话模块\n   > 王五 - 编辑器模块 / 赵六 - 文件管理\n2. 团队周会纪要_W22.md (相关度 0.78)\n   > 会议决议：本周重点推进 AI 对话模块...",
     },
     {
       type: "ai",
