@@ -85,10 +85,25 @@ function createPlaceholderElement(text: string): HTMLSpanElement {
   wrapper.appendChild(editable);
   wrapper.appendChild(placeholderEl);
 
-  // Hide placeholder when content exists
-  editable.addEventListener("input", () => {
-    placeholderEl.style.display = editable.textContent?.trim() ? "none" : "";
+  // Hide placeholder when content exists - use multiple strategies for reliability
+  const updatePlaceholder = () => {
+    const hasContent = !!(editable.textContent && editable.textContent.trim());
+    placeholderEl.style.display = hasContent ? "none" : "";
+  };
+
+  editable.addEventListener("input", updatePlaceholder);
+  editable.addEventListener("keyup", updatePlaceholder);
+  editable.addEventListener("keydown", () => {
+    // Defer to catch the keystroke result
+    requestAnimationFrame(updatePlaceholder);
   });
+  editable.addEventListener("paste", () => {
+    requestAnimationFrame(updatePlaceholder);
+  });
+
+  // MutationObserver as fallback for contentEditable quirks
+  const observer = new MutationObserver(updatePlaceholder);
+  observer.observe(editable, { childList: true, characterData: true, subtree: true });
 
   return wrapper;
 }
