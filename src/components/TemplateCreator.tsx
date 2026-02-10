@@ -4,6 +4,14 @@ import {
   Dialog,
   DialogContent,
 } from "@/components/ui/dialog";
+import { ParamConfigDialog } from "@/components/ParamConfigDialog";
+
+interface ParamConfig {
+  key: string;
+  placeholder: string;
+  type: "text" | "select";
+  options: string[];
+}
 
 interface ExtractedParam {
   name: string;
@@ -60,8 +68,20 @@ export function TemplateCreator({ open, onOpenChange, onCreated }: TemplateCreat
   const [history, setHistory] = useState<string[]>([""]);
   const [historyIdx, setHistoryIdx] = useState(0);
   const historyTimer = useRef<ReturnType<typeof setTimeout>>();
+  const [paramConfigs, setParamConfigs] = useState<Record<string, ParamConfig>>({});
+  const [configDialogOpen, setConfigDialogOpen] = useState(false);
+  const [configDialogParam, setConfigDialogParam] = useState("");
 
   const params = extractParams(promptText);
+
+  const openParamConfig = (paramName: string) => {
+    setConfigDialogParam(paramName);
+    setConfigDialogOpen(true);
+  };
+
+  const handleParamConfigConfirm = (config: ParamConfig) => {
+    setParamConfigs((prev) => ({ ...prev, [configDialogParam]: config }));
+  };
 
   // Reset state on open
   useEffect(() => {
@@ -284,7 +304,10 @@ export function TemplateCreator({ open, onOpenChange, onCreated }: TemplateCreat
                               value={param.name}
                               className="flex-1 min-w-0 px-2.5 py-1.5 rounded-md border border-border bg-background text-sm text-foreground truncate"
                             />
-                            <button className="shrink-0 p-1.5 rounded-md hover:bg-accent text-muted-foreground transition-colors">
+                            <button
+                              onClick={() => openParamConfig(param.name)}
+                              className="shrink-0 p-1.5 rounded-md hover:bg-accent text-muted-foreground transition-colors"
+                            >
                               <Settings className="h-3.5 w-3.5" />
                             </button>
                             <button
@@ -375,6 +398,13 @@ export function TemplateCreator({ open, onOpenChange, onCreated }: TemplateCreat
           </>
         )}
       </DialogContent>
+      <ParamConfigDialog
+        open={configDialogOpen}
+        onOpenChange={setConfigDialogOpen}
+        paramName={configDialogParam}
+        config={paramConfigs[configDialogParam]}
+        onConfirm={handleParamConfigConfirm}
+      />
     </Dialog>
   );
 }
