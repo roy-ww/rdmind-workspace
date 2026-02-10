@@ -6,6 +6,7 @@ import { DevWorkbenchView } from "@/pages/DevWorkbenchView";
 import { AIChatView } from "@/pages/AIChatView";
 import { AIChatView2 } from "@/pages/AIChatView2";
 import { SettingsView } from "@/pages/SettingsView";
+import { ProfileView } from "@/pages/ProfileView";
 
 const Index = () => {
   const [activeView, setActiveView] = useState("qa");
@@ -20,6 +21,7 @@ const Index = () => {
         {activeView === "knowledge" && <KnowledgeBaseView />}
         {activeView === "dev" && <DevWorkbenchView />}
         {activeView === "settings" && <SettingsView />}
+        {activeView === "profile" && <ProfileView />}
         {activeView !== "qa" && activeView !== "chat" && activeView !== "chat2" && activeView !== "knowledge" && activeView !== "dev" && activeView !== "settings" && (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center space-y-2">
