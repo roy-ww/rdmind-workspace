@@ -28,12 +28,20 @@ const mentionItems = [
   { id: "url", label: "网页链接", desc: "引用在线内容", icon: Link },
 ];
 
-export function ChatInput() {
+interface ChatInputProps {
+  /** Compact mode for embedding in panels (hides model selector row icons) */
+  compact?: boolean;
+  /** Called when user sends a message */
+  onSend?: (text: string) => void;
+  /** Placeholder text */
+  placeholder?: string;
+}
+
+export function ChatInput({ compact = false, onSend, placeholder }: ChatInputProps) {
   const [value, setValue] = useState("");
   const [selectedModel, setSelectedModel] = useState(models[0]);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [showMention, setShowMention] = useState(false);
-  const [mentionPos, setMentionPos] = useState({ top: 0, left: 0 });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -49,15 +57,18 @@ export function ChatInput() {
     if (lastAtIndex !== -1 && (lastAtIndex === 0 || textBeforeCursor[lastAtIndex - 1] === " ")) {
       const textAfterAt = textBeforeCursor.slice(lastAtIndex + 1);
       if (!textAfterAt.includes(" ")) {
-        // Calculate position relative to textarea
-        if (containerRef.current) {
-          setMentionPos({ top: -220, left: 20 });
-        }
         setShowMention(true);
         return;
       }
     }
     setShowMention(false);
+  };
+
+  const handleSend = () => {
+    const text = value.trim();
+    if (!text) return;
+    setValue("");
+    onSend?.(text);
   };
 
   const insertMention = (item: (typeof mentionItems)[0]) => {
@@ -81,7 +92,7 @@ export function ChatInput() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-2xl mx-auto">
+    <div ref={containerRef} className={cn("relative w-full", !compact && "max-w-2xl mx-auto")}>
       <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
         {/* Textarea */}
         <div className="relative">
@@ -89,8 +100,14 @@ export function ChatInput() {
             ref={textareaRef}
             value={value}
             onChange={handleInput}
-            placeholder="输入指令，使用 @ 选择资源"
-            rows={3}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey && !showMention) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+            placeholder={placeholder || "输入指令，使用 @ 选择资源"}
+            rows={compact ? 2 : 3}
             className="w-full resize-none border-0 bg-transparent px-4 pt-4 pb-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0"
           />
 
@@ -158,15 +175,22 @@ export function ChatInput() {
               )}
             </div>
 
-            <button className="p-1.5 rounded-md text-muted-foreground hover:bg-accent transition-colors">
-              <Paperclip className="h-4 w-4" />
-            </button>
-            <button className="p-1.5 rounded-md text-muted-foreground hover:bg-accent transition-colors">
-              <Globe className="h-4 w-4" />
-            </button>
+            {!compact && (
+              <>
+                <button className="p-1.5 rounded-md text-muted-foreground hover:bg-accent transition-colors">
+                  <Paperclip className="h-4 w-4" />
+                </button>
+                <button className="p-1.5 rounded-md text-muted-foreground hover:bg-accent transition-colors">
+                  <Globe className="h-4 w-4" />
+                </button>
+              </>
+            )}
           </div>
 
-          <button className="p-2 rounded-lg brand-gradient text-primary-foreground shadow-sm hover:opacity-90 transition-opacity">
+          <button
+            onClick={handleSend}
+            className="p-2 rounded-lg brand-gradient text-primary-foreground shadow-sm hover:opacity-90 transition-opacity"
+          >
             <Send className="h-4 w-4" />
           </button>
         </div>

@@ -142,8 +142,8 @@ export function MarkdownEditor({ fileName }: MarkdownEditorProps) {
         </div>
       </div>
 
-      {/* WYSIWYG Editor */}
-      <div className="flex-1 overflow-auto hide-scrollbar">
+      {/* WYSIWYG Editor - scrollable */}
+      <div className="flex-1 overflow-auto">
         <div
           ref={editorRef}
           contentEditable

@@ -3,7 +3,6 @@ import {
   BookOpen,
   CheckCircle2,
   ArrowRight,
-  Send,
   ChevronRight,
   ChevronDown,
   Brain,
@@ -12,12 +11,12 @@ import {
 } from "lucide-react";
 import { FileTree } from "@/components/FileTree";
 import { MarkdownEditor } from "@/components/MarkdownEditor";
+import { ChatInput } from "@/components/ChatInput";
 import {
   Collapsible,
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@/components/ui/collapsible";
-import { cn } from "@/lib/utils";
 
 const features = [
   "24小时在线的智能管家，随时回答你的问题",
@@ -78,7 +77,6 @@ function ToolCallBlock({ msg }: { msg: ChatMessage }) {
 }
 
 export function KnowledgeBaseView() {
-  const [assistantInput, setAssistantInput] = useState("");
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -87,16 +85,13 @@ export function KnowledgeBaseView() {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
 
-  const handleSend = () => {
-    const text = assistantInput.trim();
-    if (!text) return;
-    setAssistantInput("");
+  const handleSend = (text: string) => {
     const msgs = generateDemoResponse(text);
     setChatMessages((prev) => [...prev, ...msgs]);
   };
 
   return (
-    <div className="flex-1 flex min-h-0">
+    <div className="flex-1 flex min-h-0 h-screen">
       {/* Secondary Sidebar - File Tree */}
       <div className="w-64 border-r border-border bg-sidebar flex flex-col shrink-0">
         <div className="px-4 py-3 border-b border-border">
@@ -114,11 +109,11 @@ export function KnowledgeBaseView() {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content - scrollable when content is long */}
       {selectedFile ? (
         <MarkdownEditor fileName={selectedFile} />
       ) : (
-        <div className="flex-1 flex items-center justify-center p-8">
+        <div className="flex-1 flex items-center justify-center p-8 overflow-auto">
           <div className="text-center max-w-md space-y-6">
             <div className="mx-auto w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
               <BookOpen className="h-8 w-8 text-primary" />
@@ -146,9 +141,9 @@ export function KnowledgeBaseView() {
         </div>
       )}
 
-      {/* Right Panel - Assistant Chat */}
-      <div className="w-80 border-l border-border bg-sidebar flex flex-col shrink-0">
-        <div className="px-4 py-3 border-b border-border">
+      {/* Right Panel - Assistant Chat (fixed height) */}
+      <div className="w-80 border-l border-border bg-sidebar flex flex-col shrink-0 h-full">
+        <div className="px-4 py-3 border-b border-border shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-full brand-gradient flex items-center justify-center">
               <BookOpen className="h-3 w-3 text-primary-foreground" />
@@ -159,7 +154,7 @@ export function KnowledgeBaseView() {
           </div>
         </div>
 
-        <div className="flex-1 p-4 space-y-3 overflow-auto hide-scrollbar">
+        <div className="flex-1 p-4 space-y-3 overflow-auto hide-scrollbar min-h-0">
           {chatMessages.length === 0 ? (
             <div className="space-y-3">
               {[
@@ -220,12 +215,12 @@ export function KnowledgeBaseView() {
         </div>
 
         {/* Quick Prompt Chips */}
-        <div className="px-4 pb-2">
+        <div className="px-4 pb-2 shrink-0">
           <div className="flex flex-wrap gap-1.5">
             {quickPrompts.map((prompt) => (
               <button
                 key={prompt}
-                onClick={() => setAssistantInput(prompt)}
+                onClick={() => handleSend(prompt)}
                 className="px-2.5 py-1 rounded-full border border-border bg-card text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
               >
                 {prompt}
@@ -234,23 +229,13 @@ export function KnowledgeBaseView() {
           </div>
         </div>
 
-        {/* Chat Input */}
-        <div className="p-3 border-t border-border">
-          <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
-            <input
-              value={assistantInput}
-              onChange={(e) => setAssistantInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              placeholder="发送消息给 Assistant"
-              className="flex-1 bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none text-foreground"
-            />
-            <button
-              onClick={handleSend}
-              className="p-1.5 rounded-md brand-gradient text-primary-foreground"
-            >
-              <Send className="h-3.5 w-3.5" />
-            </button>
-          </div>
+        {/* Reused ChatInput component */}
+        <div className="p-3 border-t border-border shrink-0">
+          <ChatInput
+            compact
+            onSend={handleSend}
+            placeholder="发送消息给 Assistant"
+          />
         </div>
       </div>
     </div>
