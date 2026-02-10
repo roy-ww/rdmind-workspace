@@ -8,42 +8,42 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 265 4% 12.9%;
+    --foreground: 220 10% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 265 4% 12.9%;
+    --card-foreground: 220 10% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 265 4% 12.9%;
+    --popover-foreground: 220 10% 12%;
 
     --primary: 220 10% 24%;
     --primary-foreground: 0 0% 98%;
 
-    --secondary: 248 0.7% 96.8%;
-    --secondary-foreground: 266 4% 20.8%;
+    --secondary: 220 5% 96%;
+    --secondary-foreground: 220 10% 20%;
 
-    --muted: 248 0.7% 96.8%;
-    --muted-foreground: 257 4.6% 55.4%;
+    --muted: 220 5% 96%;
+    --muted-foreground: 220 5% 45%;
 
-    --accent: 248 0.7% 96.8%;
-    --accent-foreground: 266 4% 20.8%;
+    --accent: 220 5% 96%;
+    --accent-foreground: 220 10% 20%;
 
-    --destructive: 27 24.5% 57.7%;
+    --destructive: 0 60% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 256 1.3% 92.9%;
-    --input: 256 1.3% 92.9%;
+    --border: 220 5% 90%;
+    --input: 220 5% 90%;
     --ring: 220 10% 50%;
 
     --radius: 0.375rem;
 
     --sidebar-background: 210 20% 98%;
-    --sidebar-foreground: 265 4% 12.9%;
+    --sidebar-foreground: 220 10% 12%;
     --sidebar-primary: 220 10% 24%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 248 0.7% 96.8%;
-    --sidebar-accent-foreground: 266 4% 20.8%;
-    --sidebar-border: 256 1.3% 92.9%;
+    --sidebar-accent: 220 5% 96%;
+    --sidebar-accent-foreground: 220 10% 20%;
+    --sidebar-border: 220 5% 90%;
     --sidebar-ring: 220 10% 50%;
 
     /* Custom tokens */
@@ -55,7 +55,7 @@
     --chart-3: 227 7% 39.8%;
     --chart-4: 84 18.9% 82.8%;
     --chart-5: 70 18.8% 76.9%;
-    --sidebar: 248 0.3% 98.4%;
+    --sidebar: 220 5% 97%;
     --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -72,49 +72,49 @@
   }
 
   .dark {
-    --background: 0 0% 15%;
-    --foreground: 248 0.3% 98.4%;
-    --card: 266 4% 20.8%;
-    --card-foreground: 248 0.3% 98.4%;
-    --popover: 266 4% 20.8%;
-    --popover-foreground: 248 0.3% 98.4%;
-    --primary: 220 8% 85%;
-    --primary-foreground: 220 10% 15%;
-    --secondary: 260 4.1% 27.9%;
-    --secondary-foreground: 248 0.3% 98.4%;
-    --muted: 260 4.1% 27.9%;
-    --muted-foreground: 257 4% 70.4%;
-    --accent: 260 4.1% 27.9%;
-    --accent-foreground: 248 0.3% 98.4%;
-    --destructive: 22 19.1% 70.4%;
-    --destructive-foreground: 248 0.3% 98.4%;
-    --border: 0 0% 100% / 10%;
-    --input: 0 0% 100% / 15%;
+    --background: 220 14% 10%;
+    --foreground: 220 5% 92%;
+    --card: 220 12% 14%;
+    --card-foreground: 220 5% 92%;
+    --popover: 220 12% 14%;
+    --popover-foreground: 220 5% 92%;
+    --primary: 220 8% 82%;
+    --primary-foreground: 220 12% 12%;
+    --secondary: 220 10% 20%;
+    --secondary-foreground: 220 5% 88%;
+    --muted: 220 10% 18%;
+    --muted-foreground: 220 6% 55%;
+    --accent: 220 10% 20%;
+    --accent-foreground: 220 5% 88%;
+    --destructive: 0 55% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 10% 20%;
+    --input: 220 10% 22%;
     --ring: 220 8% 45%;
-    --sidebar-background: 222 47% 8%;
-    --sidebar-foreground: 248 0.3% 98.4%;
+    --sidebar-background: 220 14% 8%;
+    --sidebar-foreground: 220 5% 90%;
     --sidebar-primary: 220 8% 70%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 260 4.1% 27.9%;
-    --sidebar-accent-foreground: 248 0.3% 98.4%;
-    --sidebar-border: 0 0% 100% / 10%;
+    --sidebar-accent: 220 10% 18%;
+    --sidebar-accent-foreground: 220 5% 88%;
+    --sidebar-border: 220 10% 18%;
     --sidebar-ring: 220 8% 45%;
-    --surface: 222 47% 8%;
-    --surface-foreground: 210 40% 98%;
-    --chart-1: 264 24.3% 48.8%;
-    --chart-2: 162 17% 69.6%;
-    --chart-3: 70 18.8% 76.9%;
-    --chart-4: 304 26.5% 62.7%;
-    --chart-5: 16 24.6% 64.5%;
-    --sidebar: 266 4% 20.8%;
-    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-    --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-    --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+    --surface: 220 14% 8%;
+    --surface-foreground: 220 5% 95%;
+    --chart-1: 210 60% 55%;
+    --chart-2: 160 40% 50%;
+    --chart-3: 40 60% 55%;
+    --chart-4: 0 50% 55%;
+    --chart-5: 280 30% 55%;
+    --sidebar: 220 12% 14%;
+    --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.15);
+    --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.2);
+    --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.25), 0 1px 2px -1px hsl(0 0% 0% / 0.2);
+    --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.25), 0 1px 2px -1px hsl(0 0% 0% / 0.2);
+    --shadow-md: 0 2px 6px 0px hsl(0 0% 0% / 0.3), 0 2px 4px -1px hsl(0 0% 0% / 0.2);
+    --shadow-lg: 0 4px 12px 0px hsl(0 0% 0% / 0.3), 0 4px 6px -1px hsl(0 0% 0% / 0.2);
+    --shadow-xl: 0 8px 20px 0px hsl(0 0% 0% / 0.35), 0 8px 10px -1px hsl(0 0% 0% / 0.2);
+    --shadow-2xl: 0 12px 40px 0px hsl(0 0% 0% / 0.4);
   }
 }
 
@@ -132,8 +132,17 @@
   .brand-gradient {
     background: linear-gradient(135deg, hsl(220 10% 20%), hsl(220 8% 35%));
   }
+  .dark .brand-gradient {
+    background: linear-gradient(135deg, hsl(220 8% 45%), hsl(220 6% 58%));
+  }
   .text-brand-gradient {
     background: linear-gradient(135deg, hsl(220 10% 20%), hsl(220 8% 35%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .dark .text-brand-gradient {
+    background: linear-gradient(135deg, hsl(220 8% 55%), hsl(220 6% 70%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

@@ -34,11 +34,11 @@ interface UsageRecord {
 }
 
 const MODEL_USAGES: ModelUsage[] = [
-  { model: "Gemini 3 Flash", used: 128500, limit: 500000, color: "bg-blue-500" },
-  { model: "GPT-4o", used: 76200, limit: 200000, color: "bg-emerald-500" },
-  { model: "Claude 3.5 Sonnet", used: 45800, limit: 150000, color: "bg-violet-500" },
-  { model: "DeepSeek V3", used: 210300, limit: 1000000, color: "bg-amber-500" },
-  { model: "Qwen 3", used: 32100, limit: 300000, color: "bg-rose-500" },
+  { model: "Gemini 3 Flash", used: 128500, limit: 500000, color: "bg-chart-1" },
+  { model: "GPT-4o", used: 76200, limit: 200000, color: "bg-chart-2" },
+  { model: "Claude 3.5 Sonnet", used: 45800, limit: 150000, color: "bg-chart-3" },
+  { model: "DeepSeek V3", used: 210300, limit: 1000000, color: "bg-chart-4" },
+  { model: "Qwen 3", used: 32100, limit: 300000, color: "bg-chart-5" },
 ];
 
 const RECENT_RECORDS: UsageRecord[] = [
@@ -117,8 +117,8 @@ export function ProfileView() {
           </Card>
           <Card>
             <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                <TrendingUp className="h-5 w-5 text-emerald-500" />
+              <div className="h-10 w-10 rounded-lg bg-chart-2/15 flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-chart-2" />
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">今日消耗</p>
@@ -128,8 +128,8 @@ export function ProfileView() {
           </Card>
           <Card>
             <CardContent className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-violet-500/10 flex items-center justify-center">
-                <BarChart3 className="h-5 w-5 text-violet-500" />
+              <div className="h-10 w-10 rounded-lg bg-chart-3/15 flex items-center justify-center">
+                <BarChart3 className="h-5 w-5 text-chart-3" />
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">总额度</p>
