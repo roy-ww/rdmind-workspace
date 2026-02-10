@@ -237,13 +237,17 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
           {showMention && (
             <div
               ref={mentionMenuRef}
-              className="fixed z-[9999] bg-popover border border-border rounded-lg shadow-lg w-[210px] py-1 overflow-hidden"
+              className="fixed z-[9999] bg-popover border border-border rounded-lg shadow-lg w-[210px] py-1"
               style={mentionStyle}
               onClick={(e) => e.stopPropagation()}
             >
               {mentionItems.map((item) => (
                 <button
                   key={item.id}
+                  onMouseEnter={() => {
+                    if (item.hasSubmenu) setShowFileSubmenu(true);
+                    else setShowFileSubmenu(false);
+                  }}
                   onClick={() => handleMentionClick(item)}
                   className={cn(
                     "flex items-center gap-2.5 w-full px-3 py-1.5 text-sm hover:bg-accent transition-colors",
@@ -261,28 +265,32 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
                   </span>
                 </button>
               ))}
+            </div>
+          )}
 
-              {/* File Submenu */}
-              {showFileSubmenu && (
-                <div
-                  className="absolute left-full top-0 ml-1 z-[10000] bg-popover border border-border rounded-lg shadow-lg w-[200px] py-1"
-                  onClick={(e) => e.stopPropagation()}
+          {/* File Submenu - rendered as sibling portal to avoid overflow clipping */}
+          {showMention && showFileSubmenu && (
+            <div
+              className="fixed z-[10000] bg-popover border border-border rounded-lg shadow-lg w-[200px] py-1"
+              style={{
+                top: mentionStyle.top,
+                left: typeof mentionStyle.left === 'number' ? mentionStyle.left + 214 : mentionStyle.left,
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="px-3 py-1.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                选择文件
+              </div>
+              {fileSubItems.map((file) => (
+                <button
+                  key={file.id}
+                  onClick={() => handleFileSelect(file)}
+                  className="flex items-center gap-2.5 w-full px-3 py-1.5 text-sm hover:bg-accent transition-colors"
                 >
-                  <div className="px-3 py-1.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-                    选择文件
-                  </div>
-                  {fileSubItems.map((file) => (
-                    <button
-                      key={file.id}
-                      onClick={() => handleFileSelect(file)}
-                      className="flex items-center gap-2.5 w-full px-3 py-1.5 text-sm hover:bg-accent transition-colors"
-                    >
-                      <file.icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                      <span className="text-sm text-foreground">{file.label}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
+                  <file.icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  <span className="text-sm text-foreground">{file.label}</span>
+                </button>
+              ))}
             </div>
           )}
           <div ref={mirrorRef} aria-hidden="true" />
