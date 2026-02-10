@@ -13,6 +13,7 @@ const Index = () => {
       <AppSidebar activeView={activeView} onNavigate={setActiveView} />
       <main className="flex-1 flex min-h-0">
         {activeView === "qa" && <DashboardView />}
+        {activeView === "chat" && <AIChatView />}
         {activeView === "knowledge" && <KnowledgeBaseView />}
         {activeView === "dev" && <DevWorkbenchView />}
         {activeView !== "qa" && activeView !== "knowledge" && activeView !== "dev" && (
