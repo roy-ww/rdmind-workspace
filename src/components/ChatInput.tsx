@@ -97,12 +97,17 @@ function createPlaceholderElement(text: string): HTMLSpanElement {
   return wrapper;
 }
 
-function createDropdownElement(defaultVal: string, options: string[]): HTMLSelectElement {
+function createDropdownElement(defaultVal: string, options: string[]): HTMLSpanElement {
+  const wrapper = document.createElement("span");
+  wrapper.className =
+    "inline-flex items-center relative mx-0.5 rounded-md border border-solid border-primary/30 bg-primary/5 align-middle cursor-pointer hover:bg-primary/10 transition-colors";
+  wrapper.contentEditable = "false";
+
   const select = document.createElement("select");
   select.setAttribute(DROPDOWN_ATTR, "true");
   select.contentEditable = "false";
   select.className =
-    "inline-block px-2 py-0.5 mx-0.5 rounded-md border border-solid border-primary/30 bg-primary/5 text-sm text-primary font-medium align-middle outline-none cursor-pointer appearance-none hover:bg-primary/10 transition-colors";
+    "appearance-none bg-transparent pl-2 pr-5 py-0.5 text-sm text-primary font-medium outline-none cursor-pointer";
   options.forEach((opt) => {
     const option = document.createElement("option");
     option.value = opt;
@@ -110,12 +115,28 @@ function createDropdownElement(defaultVal: string, options: string[]): HTMLSelec
     if (opt === defaultVal) option.selected = true;
     select.appendChild(option);
   });
-  // Auto-size width based on content
-  select.style.width = `${(defaultVal.length + 2) * 14}px`;
-  select.addEventListener("change", () => {
-    select.style.width = `${(select.value.length + 2) * 14}px`;
-  });
-  return select;
+
+  // Chevron icon
+  const chevron = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  chevron.setAttribute("width", "12");
+  chevron.setAttribute("height", "12");
+  chevron.setAttribute("viewBox", "0 0 24 24");
+  chevron.setAttribute("fill", "none");
+  chevron.setAttribute("stroke", "currentColor");
+  chevron.setAttribute("stroke-width", "2");
+  chevron.setAttribute("stroke-linecap", "round");
+  chevron.setAttribute("stroke-linejoin", "round");
+  chevron.classList.add("absolute", "right-1", "top-1/2", "pointer-events-none");
+  chevron.style.transform = "translateY(-50%)";
+  chevron.style.color = "hsl(var(--primary) / 0.5)";
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", "m6 9 6 6 6-6");
+  chevron.appendChild(path);
+
+  wrapper.appendChild(select);
+  wrapper.appendChild(chevron);
+
+  return wrapper;
 }
 
 function createChipElement(label: string, type: string, fileId?: string): HTMLSpanElement {
