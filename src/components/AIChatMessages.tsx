@@ -94,8 +94,8 @@ export const AIChatMessages = forwardRef<HTMLDivElement, AIChatMessagesProps>(
           }
           return (
             <div key={i} className="flex justify-start">
-              <div className="max-w-[90%] rounded-2xl rounded-bl-sm px-3.5 py-2.5 bg-muted text-foreground text-xs leading-relaxed whitespace-pre-line">
-                {msg.content}
+              <div className="max-w-[95%] rounded-2xl rounded-bl-sm px-4 py-3 bg-muted text-foreground text-sm leading-relaxed prose prose-sm prose-neutral dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
               </div>
             </div>
           );
