@@ -22,7 +22,7 @@ const templates: Template[] = [
     desc: "快速审查代码质量，发现潜在问题",
     icon: FileCode,
     stars: 128,
-    prompt: "对 前端·代码进行代码审查，关注 {审查重点，如：性能、安全、代码规范等}，代码路径：{代码文件或目录路径}",
+    prompt: "对 [前端|前端,后端,全栈]·代码进行代码审查，关注 {审查重点，如：性能、安全、代码规范等}，代码路径：{代码文件或目录路径}",
   },
   {
     title: "群聊总结",
@@ -61,23 +61,37 @@ const templates: Template[] = [
   },
 ];
 
-/** Render prompt text with {placeholder} highlighted */
+/** Render prompt text with {placeholder} and [dropdown] highlighted */
 function PromptContent({ prompt }: { prompt: string }) {
-  const parts = prompt.split(/(\{[^}]+\})/g);
+  // Split by {placeholder} and [default|options]
+  const parts = prompt.split(/(\{[^}]+\}|\[[^\]]+\])/g);
   return (
     <p className="text-sm text-foreground leading-relaxed">
-      {parts.map((part, i) =>
-        part.startsWith("{") && part.endsWith("}") ? (
-          <span
-            key={i}
-            className="inline-block px-1.5 py-0.5 mx-0.5 rounded bg-primary/10 text-primary border border-primary/20 text-sm font-medium"
-          >
-            {part}
-          </span>
-        ) : (
-          <span key={i}>{part}</span>
-        )
-      )}
+      {parts.map((part, i) => {
+        if (part.startsWith("{") && part.endsWith("}")) {
+          return (
+            <span
+              key={i}
+              className="inline-block px-1.5 py-0.5 mx-0.5 rounded bg-primary/10 text-primary border border-primary/20 text-sm font-medium"
+            >
+              {part}
+            </span>
+          );
+        }
+        if (part.startsWith("[") && part.endsWith("]")) {
+          const inner = part.slice(1, -1);
+          const defaultVal = inner.split("|")[0];
+          return (
+            <span
+              key={i}
+              className="inline-block px-1.5 py-0.5 mx-0.5 rounded bg-primary/10 text-primary border border-primary/20 text-sm font-medium"
+            >
+              {defaultVal}
+            </span>
+          );
+        }
+        return <span key={i}>{part}</span>;
+      })}
     </p>
   );
 }

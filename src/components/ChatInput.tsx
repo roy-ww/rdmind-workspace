@@ -58,6 +58,7 @@ export interface SelectedMention {
 
 const CHIP_ATTR = "data-mention-chip";
 const PLACEHOLDER_ATTR = "data-template-placeholder";
+const DROPDOWN_ATTR = "data-template-dropdown";
 
 function createPlaceholderElement(text: string): HTMLSpanElement {
   const el = document.createElement("span");
@@ -67,6 +68,27 @@ function createPlaceholderElement(text: string): HTMLSpanElement {
     "inline-block px-2 py-0.5 mx-0.5 rounded-md border border-dashed border-muted-foreground/40 text-sm text-primary align-middle min-w-[2em] outline-none focus:border-primary/50 focus:bg-primary/5 transition-colors";
   el.textContent = text;
   return el;
+}
+
+function createDropdownElement(defaultVal: string, options: string[]): HTMLSelectElement {
+  const select = document.createElement("select");
+  select.setAttribute(DROPDOWN_ATTR, "true");
+  select.contentEditable = "false";
+  select.className =
+    "inline-block px-2 py-0.5 mx-0.5 rounded-md border border-solid border-primary/30 bg-primary/5 text-sm text-primary font-medium align-middle outline-none cursor-pointer appearance-none hover:bg-primary/10 transition-colors";
+  options.forEach((opt) => {
+    const option = document.createElement("option");
+    option.value = opt;
+    option.textContent = opt;
+    if (opt === defaultVal) option.selected = true;
+    select.appendChild(option);
+  });
+  // Auto-size width based on content
+  select.style.width = `${(defaultVal.length + 2) * 14}px`;
+  select.addEventListener("change", () => {
+    select.style.width = `${(select.value.length + 2) * 14}px`;
+  });
+  return select;
 }
 
 function createChipElement(label: string, type: string, fileId?: string): HTMLSpanElement {
@@ -155,12 +177,18 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function Ch
   const fillEditorWithTemplate = useCallback((prompt: string) => {
     if (!editorRef.current) return;
     editorRef.current.innerHTML = "";
-    // Parse prompt: split by {placeholder} and create inline elements
-    const parts = prompt.split(/(\{[^}]+\})/g);
+    // Parse prompt: split by {placeholder} and [default|opt1,opt2] patterns
+    const parts = prompt.split(/(\{[^}]+\}|\[[^\]]+\])/g);
     parts.forEach((part) => {
       if (part.startsWith("{") && part.endsWith("}")) {
         const placeholder = createPlaceholderElement(part.slice(1, -1));
         editorRef.current!.appendChild(placeholder);
+      } else if (part.startsWith("[") && part.endsWith("]")) {
+        const inner = part.slice(1, -1);
+        const [defaultVal, optionsStr] = inner.split("|");
+        const options = optionsStr ? optionsStr.split(",") : [defaultVal];
+        const dropdown = createDropdownElement(defaultVal.trim(), options.map(o => o.trim()));
+        editorRef.current!.appendChild(dropdown);
       } else if (part) {
         editorRef.current!.appendChild(document.createTextNode(part));
       }
