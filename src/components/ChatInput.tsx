@@ -4,11 +4,15 @@ import {
   Paperclip,
   Globe,
   ChevronDown,
+  ChevronRight,
   FileText,
   Database,
   Image,
   Link,
   BookOpen,
+  X,
+  FileJson,
+  FileCode,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,20 +24,42 @@ const models = [
   { id: "qwen-max", label: "Qwen-Max", desc: "中文优化" },
 ];
 
-const mentionItems = [
-  { id: "file", label: "文件", desc: "引用本地文件", icon: FileText },
+interface FileItem {
+  id: string;
+  label: string;
+  icon: typeof FileJson;
+}
+
+const fileSubItems: FileItem[] = [
+  { id: "abc_123.json", label: "abc_123.json", icon: FileJson },
+  { id: "xzy_123.md", label: "xzy_123.md", icon: FileCode },
+];
+
+interface MentionItem {
+  id: string;
+  label: string;
+  desc: string;
+  icon: typeof FileText;
+  hasSubmenu?: boolean;
+}
+
+const mentionItems: MentionItem[] = [
+  { id: "file", label: "文件", desc: "引用本地文件", icon: FileText, hasSubmenu: true },
   { id: "knowledge", label: "知识库", desc: "搜索知识库文档", icon: BookOpen },
   { id: "database", label: "数据库", desc: "查询数据源", icon: Database },
   { id: "image", label: "图片", desc: "引用图片资源", icon: Image },
   { id: "url", label: "网页链接", desc: "引用在线内容", icon: Link },
 ];
 
+export interface SelectedMention {
+  type: string;
+  label: string;
+  fileId?: string;
+}
+
 interface ChatInputProps {
-  /** Compact mode for embedding in panels (hides model selector row icons) */
   compact?: boolean;
-  /** Called when user sends a message */
-  onSend?: (text: string) => void;
-  /** Placeholder text */
+  onSend?: (text: string, mentions?: SelectedMention[]) => void;
   placeholder?: string;
 }
 
@@ -42,7 +68,9 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
   const [selectedModel, setSelectedModel] = useState(models[0]);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [showMention, setShowMention] = useState(false);
+  const [showFileSubmenu, setShowFileSubmenu] = useState(false);
   const [mentionStyle, setMentionStyle] = useState<React.CSSProperties>({});
+  const [selectedMentions, setSelectedMentions] = useState<SelectedMention[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const mirrorRef = useRef<HTMLDivElement>(null);
@@ -83,44 +111,74 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
         const textareaRect = e.target.getBoundingClientRect();
         const menuW = 210;
         const menuH = 200;
-        // Absolute screen position of cursor
         let screenX = textareaRect.left + pos.left;
         let screenY = textareaRect.top + pos.top + 24;
-        // Clamp to viewport
         if (screenX + menuW > window.innerWidth) screenX = window.innerWidth - menuW - 8;
         if (screenX < 8) screenX = 8;
         if (screenY + menuH > window.innerHeight) screenY = textareaRect.top + pos.top - menuH - 4;
         if (screenY < 8) screenY = 8;
         setMentionStyle({ position: 'fixed', top: screenY, left: screenX });
         setShowMention(true);
+        setShowFileSubmenu(false);
         return;
       }
     }
     setShowMention(false);
+    setShowFileSubmenu(false);
   };
 
   const handleSend = () => {
     const text = value.trim();
-    if (!text) return;
+    if (!text && selectedMentions.length === 0) return;
     setValue("");
-    onSend?.(text);
+    const mentions = [...selectedMentions];
+    setSelectedMentions([]);
+    onSend?.(text, mentions);
   };
 
-  const insertMention = (item: (typeof mentionItems)[0]) => {
+  const removeAtFromInput = () => {
     const cursorPos = textareaRef.current?.selectionStart || 0;
     const textBeforeCursor = value.slice(0, cursorPos);
     const lastAtIndex = textBeforeCursor.lastIndexOf("@");
-    const newValue =
-      value.slice(0, lastAtIndex) + `@${item.label} ` + value.slice(cursorPos);
-    setValue(newValue);
+    if (lastAtIndex !== -1) {
+      const newValue = value.slice(0, lastAtIndex) + value.slice(cursorPos);
+      setValue(newValue);
+    }
+  };
+
+  const handleMentionClick = (item: MentionItem) => {
+    if (item.hasSubmenu) {
+      setShowFileSubmenu(true);
+      return;
+    }
+    removeAtFromInput();
+    setSelectedMentions((prev) => [...prev, { type: item.id, label: item.label }]);
     setShowMention(false);
+    setShowFileSubmenu(false);
     textareaRef.current?.focus();
+  };
+
+  const handleFileSelect = (file: FileItem) => {
+    removeAtFromInput();
+    // Avoid duplicates
+    setSelectedMentions((prev) => {
+      if (prev.some((m) => m.fileId === file.id)) return prev;
+      return [...prev, { type: "file", label: file.label, fileId: file.id }];
+    });
+    setShowMention(false);
+    setShowFileSubmenu(false);
+    textareaRef.current?.focus();
+  };
+
+  const removeMention = (index: number) => {
+    setSelectedMentions((prev) => prev.filter((_, i) => i !== index));
   };
 
   useEffect(() => {
     const handleClickOutside = () => {
       setShowModelDropdown(false);
       setShowMention(false);
+      setShowFileSubmenu(false);
     };
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
@@ -129,6 +187,35 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
   return (
     <div ref={containerRef} className={cn("relative w-full", !compact && "max-w-2xl mx-auto")}>
       <div className="rounded-xl border border-border bg-card shadow-sm">
+        {/* Selected mention chips */}
+        {selectedMentions.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 px-4 pt-3">
+            {selectedMentions.map((mention, i) => (
+              <span
+                key={i}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary/10 border border-primary/20 text-xs font-medium text-primary"
+              >
+                {mention.type === "file" ? (
+                  mention.label.endsWith(".json") ? (
+                    <FileJson className="h-3 w-3" />
+                  ) : (
+                    <FileCode className="h-3 w-3" />
+                  )
+                ) : (
+                  <FileText className="h-3 w-3" />
+                )}
+                {mention.label}
+                <button
+                  onClick={() => removeMention(i)}
+                  className="ml-0.5 hover:text-destructive transition-colors"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+
         {/* Textarea */}
         <div className="relative">
           <textarea
@@ -157,14 +244,45 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
               {mentionItems.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => insertMention(item)}
-                  className="flex items-center gap-2.5 w-full px-3 py-1.5 text-sm hover:bg-accent transition-colors"
+                  onClick={() => handleMentionClick(item)}
+                  className={cn(
+                    "flex items-center gap-2.5 w-full px-3 py-1.5 text-sm hover:bg-accent transition-colors",
+                    item.hasSubmenu && showFileSubmenu && "bg-accent"
+                  )}
                 >
                   <item.icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                   <span className="text-sm text-foreground">{item.label}</span>
-                  <span className="text-xs text-muted-foreground ml-auto">{item.desc}</span>
+                  <span className="text-xs text-muted-foreground ml-auto">
+                    {item.hasSubmenu ? (
+                      <ChevronRight className="h-3 w-3" />
+                    ) : (
+                      item.desc
+                    )}
+                  </span>
                 </button>
               ))}
+
+              {/* File Submenu */}
+              {showFileSubmenu && (
+                <div
+                  className="absolute left-full top-0 ml-1 z-[10000] bg-popover border border-border rounded-lg shadow-lg w-[200px] py-1"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="px-3 py-1.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                    选择文件
+                  </div>
+                  {fileSubItems.map((file) => (
+                    <button
+                      key={file.id}
+                      onClick={() => handleFileSelect(file)}
+                      className="flex items-center gap-2.5 w-full px-3 py-1.5 text-sm hover:bg-accent transition-colors"
+                    >
+                      <file.icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                      <span className="text-sm text-foreground">{file.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
           <div ref={mirrorRef} aria-hidden="true" />
