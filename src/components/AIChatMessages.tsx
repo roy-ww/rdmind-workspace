@@ -38,10 +38,11 @@ function ToolCallBlock({ msg }: { msg: ChatMessage }) {
 
 interface AIChatMessagesProps {
   messages: ChatMessage[];
+  isLoading?: boolean;
 }
 
 export const AIChatMessages = forwardRef<HTMLDivElement, AIChatMessagesProps>(
-  ({ messages }, ref) => {
+  ({ messages, isLoading }, ref) => {
     if (messages.length === 0) {
       return (
         <div className="space-y-3">
@@ -100,6 +101,16 @@ export const AIChatMessages = forwardRef<HTMLDivElement, AIChatMessagesProps>(
             </div>
           );
         })}
+        {isLoading && (
+          <div className="flex items-center gap-1.5 px-2 py-1.5">
+            <div className="flex gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce [animation-delay:0ms]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce [animation-delay:150ms]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce [animation-delay:300ms]" />
+            </div>
+            <span className="text-xs text-muted-foreground">正在回复...</span>
+          </div>
+        )}
         <div ref={ref} />
       </div>
     );

@@ -46,7 +46,50 @@ function generateDemoResponse(userText: string): ChatMessage[] {
     },
     {
       type: "ai",
-      content: `**建议下一步行动：**\n1. 完善语义检索功能的技术方案\n2. 开始 AI 对话模块的原型开发\n3. 安排一次技术评审会议\n4. 补充单元测试覆盖率至 80% 以上\n\n如需了解更多细节，请随时提问。`,
+      content: `**建议下一步行动：**\n1. 完善语义检索功能的技术方案\n2. 开始 AI 对话模块的原型开发\n3. 安排一次技术评审会议\n4. 补充单元测试覆盖率至 80% 以上`,
+    },
+    {
+      type: "tool",
+      content: "进度跟踪_Q2.xlsx",
+      toolName: "读取文件",
+      toolResult: "成功读取，共 24 行",
+    },
+    {
+      type: "tool",
+      content: "团队成员_任务分配.md",
+      toolName: "搜索知识库",
+      toolResult: "匹配到 2 篇相关文档",
+    },
+    {
+      type: "ai",
+      content: `经过进一步分析，我找到了更详细的进度数据。以下是各模块的完成情况：`,
+    },
+    {
+      type: "ai",
+      content: `### 📊 项目各模块详细进度报告
+
+| 模块名称 | 负责人 | 计划完成日期 | 当前进度 | 状态 |
+|---------|--------|------------|---------|------|
+| 知识库 CRUD | 张三 | 2024-06-15 | 95% | ✅ 即将完成 |
+| Markdown 编辑器 | 李四 | 2024-06-20 | 88% | 🔄 进行中 |
+| AI 对话集成 | 王五 | 2024-07-10 | 45% | 🔄 进行中 |
+| 语义检索引擎 | 赵六 | 2024-07-05 | 60% | 🔄 进行中 |
+| 用户权限系统 | 孙七 | 2024-06-30 | 72% | 🔄 进行中 |
+| 文件存储服务 | 周八 | 2024-06-25 | 80% | 🔄 进行中 |
+| 数据可视化 | 吴九 | 2024-07-15 | 30% | ⚠️ 需加速 |
+| API 网关 | 郑十 | 2024-07-01 | 55% | 🔄 进行中 |
+
+#### 📌 关键风险点
+- **数据可视化模块**进度偏慢，建议增派人手或调整优先级
+- **AI 对话集成**依赖语义检索引擎，需确保后者按时交付
+- 整体项目健康度评分：**7.5 / 10**
+
+#### 💡 优化建议
+1. 将「知识库 CRUD」的剩余工作尽快收尾，释放张三支援数据可视化
+2. 语义检索与 AI 对话两个模块建议做一次联合技术评审，减少集成风险
+3. 建议每周五增加 30 分钟 stand-up 会议，聚焦跨模块依赖问题
+
+如需了解某个模块的更多细节，或需要我生成甘特图，请随时告诉我。`,
     },
   ];
 }
@@ -59,7 +102,9 @@ interface AIChatProps {
 
 export function AIChat({ className, externalPrompt, onExternalPromptConsumed }: AIChatProps) {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [isStreaming, setIsStreaming] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef(false);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -77,12 +122,20 @@ export function AIChat({ className, externalPrompt, onExternalPromptConsumed }: 
   const handleSend = async (text: string) => {
     if (isSendingRef.current) return;
     isSendingRef.current = true;
+    abortRef.current = false;
+    setIsStreaming(true);
     const msgs = generateDemoResponse(text);
     for (const msg of msgs) {
+      if (abortRef.current) break;
       setChatMessages((prev) => [...prev, msg]);
-      await new Promise((r) => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 500));
     }
+    setIsStreaming(false);
     isSendingRef.current = false;
+  };
+
+  const handleStop = () => {
+    abortRef.current = true;
   };
 
   const hasMessages = chatMessages.length > 0;
@@ -103,7 +156,7 @@ export function AIChat({ className, externalPrompt, onExternalPromptConsumed }: 
 
       {/* Chat messages area */}
       <div className="flex-1 p-4 overflow-auto hide-scrollbar min-h-0">
-        <AIChatMessages messages={chatMessages} ref={chatEndRef} />
+        <AIChatMessages messages={chatMessages} ref={chatEndRef} isLoading={isStreaming} />
       </div>
 
       {/* Quick Prompt Chips */}
@@ -127,6 +180,8 @@ export function AIChat({ className, externalPrompt, onExternalPromptConsumed }: 
           compact
           onSend={handleSend}
           placeholder="发送消息给 Assistant"
+          isLoading={isStreaming}
+          onStop={handleStop}
         />
       </div>
     </div>

@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback, useImperativeHandle, forwardRef } from "react";
 import {
   Send,
+  Square,
+  Loader2,
   Paperclip,
   Globe,
   ChevronDown,
@@ -244,9 +246,11 @@ interface ChatInputProps {
   compact?: boolean;
   onSend?: (text: string, mentions?: SelectedMention[]) => void;
   placeholder?: string;
+  isLoading?: boolean;
+  onStop?: () => void;
 }
 
-export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function ChatInput({ compact = false, onSend, placeholder }, ref) {
+export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function ChatInput({ compact = false, onSend, placeholder, isLoading, onStop }, ref) {
   const [selectedModel, setSelectedModel] = useState(models[0]);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [showMention, setShowMention] = useState(false);
@@ -649,12 +653,22 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function Ch
             )}
           </div>
 
-          <button
-            onClick={handleSend}
-            className="p-2 rounded-lg brand-gradient text-primary-foreground shadow-sm hover:opacity-90 transition-opacity"
-          >
-            <Send className="h-4 w-4" />
-          </button>
+          {isLoading ? (
+            <button
+              onClick={onStop}
+              className="p-2 rounded-lg bg-destructive text-destructive-foreground shadow-sm hover:opacity-90 transition-opacity"
+              title="终止回复"
+            >
+              <Square className="h-4 w-4" />
+            </button>
+          ) : (
+            <button
+              onClick={handleSend}
+              className="p-2 rounded-lg brand-gradient text-primary-foreground shadow-sm hover:opacity-90 transition-opacity"
+            >
+              <Send className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
     </div>
