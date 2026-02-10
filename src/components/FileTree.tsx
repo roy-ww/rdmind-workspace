@@ -49,13 +49,35 @@ const fileTree: TreeNode[] = [
   },
 ];
 
-function TreeItem({ node, depth = 0 }: { node: TreeNode; depth?: number }) {
+interface FileTreeProps {
+  onFileSelect?: (fileName: string) => void;
+  selectedFile?: string | null;
+}
+
+function TreeItem({
+  node,
+  depth = 0,
+  onFileSelect,
+  selectedFile,
+}: {
+  node: TreeNode;
+  depth?: number;
+  onFileSelect?: (fileName: string) => void;
+  selectedFile?: string | null;
+}) {
   const [open, setOpen] = useState(depth < 1);
 
   if (node.type === "file") {
+    const isActive = selectedFile === node.name;
     return (
       <button
-        className="flex items-center gap-2 w-full py-1.5 px-2 rounded-md text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+        onClick={() => onFileSelect?.(node.name)}
+        className={cn(
+          "flex items-center gap-2 w-full py-1.5 px-2 rounded-md text-sm transition-colors",
+          isActive
+            ? "bg-primary/10 text-primary font-medium"
+            : "text-muted-foreground hover:bg-accent hover:text-foreground"
+        )}
         style={{ paddingLeft: `${(depth + 1) * 12 + 8}px` }}
       >
         <FileText className="h-3.5 w-3.5 shrink-0" />
@@ -83,18 +105,30 @@ function TreeItem({ node, depth = 0 }: { node: TreeNode; depth?: number }) {
         )}
         <span className="truncate">{node.name}</span>
       </button>
-      {open && node.children?.map((child) => (
-        <TreeItem key={child.name} node={child} depth={depth + 1} />
-      ))}
+      {open &&
+        node.children?.map((child) => (
+          <TreeItem
+            key={child.name}
+            node={child}
+            depth={depth + 1}
+            onFileSelect={onFileSelect}
+            selectedFile={selectedFile}
+          />
+        ))}
     </div>
   );
 }
 
-export function FileTree() {
+export function FileTree({ onFileSelect, selectedFile }: FileTreeProps) {
   return (
     <div className="space-y-0.5">
       {fileTree.map((node) => (
-        <TreeItem key={node.name} node={node} />
+        <TreeItem
+          key={node.name}
+          node={node}
+          onFileSelect={onFileSelect}
+          selectedFile={selectedFile}
+        />
       ))}
     </div>
   );
