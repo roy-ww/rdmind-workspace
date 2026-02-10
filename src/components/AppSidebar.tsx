@@ -33,6 +33,7 @@ const navItems = [
 
 export function AppSidebar({ activeView, onNavigate }: AppSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   return (
     <aside
