@@ -141,7 +141,13 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
           {/* @ Mention Dropdown */}
           {showMention && (
             <div
-              className="absolute bottom-full left-4 mb-2 z-50 bg-popover border border-border rounded-lg shadow-lg w-52 py-1 overflow-hidden"
+              className="absolute z-50 bg-popover border border-border rounded-lg shadow-lg w-[210px] py-1 overflow-hidden"
+              style={{
+                top: `${mentionPos.top + 24}px`,
+                ...(mentionPos.flipLeft
+                  ? { right: `calc(100% - ${mentionPos.left + 16}px)` }
+                  : { left: `${mentionPos.left + 16}px` }),
+              }}
               onClick={(e) => e.stopPropagation()}
             >
               {mentionItems.map((item) => (
@@ -157,6 +163,7 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
               ))}
             </div>
           )}
+          <div ref={mirrorRef} aria-hidden="true" />
         </div>
 
         {/* Bottom Controls */}
