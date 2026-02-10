@@ -207,6 +207,21 @@ export function TemplateCreator({ open, onOpenChange, onCreated }: TemplateCreat
                         ref={textareaRef}
                         value={promptText}
                         onChange={(e) => handleTextChange(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === '{') {
+                            e.preventDefault();
+                            const ta = textareaRef.current;
+                            if (!ta) return;
+                            const start = ta.selectionStart;
+                            const end = ta.selectionEnd;
+                            const newText = promptText.slice(0, start) + '{}' + promptText.slice(end);
+                            handleTextChange(newText);
+                            setTimeout(() => {
+                              ta.focus();
+                              ta.setSelectionRange(start + 1, start + 1);
+                            }, 0);
+                          }
+                        }}
                         placeholder="在此输入模板内容，使用 {参数名} 标记可变参数..."
                         className="w-full h-full resize-none border-0 bg-transparent p-4 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 font-mono relative z-10 cursor-text"
                         style={{ color: 'transparent', caretColor: 'hsl(var(--foreground))' }}
