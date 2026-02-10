@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useImperativeHandle, forwardRef } from "react";
 import {
   Send,
   Paperclip,
@@ -119,13 +119,17 @@ function getMentions(el: HTMLDivElement): SelectedMention[] {
   return mentions;
 }
 
+export interface ChatInputHandle {
+  setContent: (text: string) => void;
+}
+
 interface ChatInputProps {
   compact?: boolean;
   onSend?: (text: string, mentions?: SelectedMention[]) => void;
   placeholder?: string;
 }
 
-export function ChatInput({ compact = false, onSend, placeholder }: ChatInputProps) {
+export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function ChatInput({ compact = false, onSend, placeholder }, ref) {
   const [selectedModel, setSelectedModel] = useState(models[0]);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [showMention, setShowMention] = useState(false);
@@ -134,6 +138,24 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
   const [isEmpty, setIsEmpty] = useState(true);
   const editorRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    setContent: (text: string) => {
+      if (!editorRef.current) return;
+      editorRef.current.textContent = text;
+      setIsEmpty(!text.trim());
+      // Move cursor to end
+      const sel = window.getSelection();
+      if (sel) {
+        const range = document.createRange();
+        range.selectNodeContents(editorRef.current);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+      editorRef.current.focus();
+    },
+  }), []);
 
   const checkEmpty = useCallback(() => {
     if (!editorRef.current) return;
@@ -464,4 +486,4 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
       </div>
     </div>
   );
-}
+});

@@ -1,9 +1,16 @@
+import { useRef } from "react";
 import { Sparkles } from "lucide-react";
-import { ChatInput } from "@/components/ChatInput";
+import { ChatInput, type ChatInputHandle } from "@/components/ChatInput";
 import { QuickActions } from "@/components/QuickActions";
 import { TemplateGallery } from "@/components/TemplateGallery";
 
 export function DashboardView() {
+  const chatInputRef = useRef<ChatInputHandle>(null);
+
+  const handleSendTemplate = (prompt: string) => {
+    chatInputRef.current?.setContent(prompt);
+  };
+
   return (
     <div className="flex-1 flex flex-col items-center overflow-auto">
       <div className="w-full max-w-3xl mx-auto px-6 py-16 flex flex-col items-center gap-8">
@@ -17,13 +24,13 @@ export function DashboardView() {
         </div>
 
         {/* Chat Input */}
-        <ChatInput />
+        <ChatInput ref={chatInputRef} />
 
         {/* Quick Actions */}
         <QuickActions />
 
         {/* Template Gallery */}
-        <TemplateGallery />
+        <TemplateGallery onSendTemplate={handleSendTemplate} />
       </div>
     </div>
   );
