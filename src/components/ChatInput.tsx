@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   Send,
   Paperclip,
@@ -10,7 +10,6 @@ import {
   Image,
   Link,
   BookOpen,
-  X,
   FileJson,
   FileCode,
 } from "lucide-react";
@@ -57,6 +56,69 @@ export interface SelectedMention {
   fileId?: string;
 }
 
+const CHIP_ATTR = "data-mention-chip";
+
+function createChipElement(label: string, type: string, fileId?: string): HTMLSpanElement {
+  const chip = document.createElement("span");
+  chip.setAttribute(CHIP_ATTR, "true");
+  chip.setAttribute("data-mention-type", type);
+  if (fileId) chip.setAttribute("data-mention-file-id", fileId);
+  chip.contentEditable = "false";
+  chip.className =
+    "inline-flex items-center gap-1 px-2 py-0.5 mx-0.5 rounded-md bg-primary/10 border border-primary/20 text-xs font-medium text-primary align-middle select-none";
+  
+  // Icon
+  const iconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  iconSvg.setAttribute("width", "12");
+  iconSvg.setAttribute("height", "12");
+  iconSvg.setAttribute("viewBox", "0 0 24 24");
+  iconSvg.setAttribute("fill", "none");
+  iconSvg.setAttribute("stroke", "currentColor");
+  iconSvg.setAttribute("stroke-width", "2");
+  iconSvg.setAttribute("stroke-linecap", "round");
+  iconSvg.setAttribute("stroke-linejoin", "round");
+  iconSvg.classList.add("shrink-0");
+  // Simple file icon path
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("d", "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z");
+  const polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+  polyline.setAttribute("points", "14 2 14 8 20 8");
+  iconSvg.appendChild(path);
+  iconSvg.appendChild(polyline);
+  chip.appendChild(iconSvg);
+
+  const text = document.createTextNode(label);
+  chip.appendChild(text);
+
+  return chip;
+}
+
+function getTextContent(el: HTMLDivElement): string {
+  let text = "";
+  el.childNodes.forEach((node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      text += node.textContent || "";
+    } else if (node instanceof HTMLElement && node.hasAttribute(CHIP_ATTR)) {
+      // Skip chips for text extraction
+    } else if (node instanceof HTMLBRElement) {
+      text += "\n";
+    }
+  });
+  return text;
+}
+
+function getMentions(el: HTMLDivElement): SelectedMention[] {
+  const mentions: SelectedMention[] = [];
+  el.querySelectorAll(`[${CHIP_ATTR}]`).forEach((chip) => {
+    mentions.push({
+      type: chip.getAttribute("data-mention-type") || "file",
+      label: chip.textContent || "",
+      fileId: chip.getAttribute("data-mention-file-id") || undefined,
+    });
+  });
+  return mentions;
+}
+
 interface ChatInputProps {
   compact?: boolean;
   onSend?: (text: string, mentions?: SelectedMention[]) => void;
@@ -64,115 +126,186 @@ interface ChatInputProps {
 }
 
 export function ChatInput({ compact = false, onSend, placeholder }: ChatInputProps) {
-  const [value, setValue] = useState("");
   const [selectedModel, setSelectedModel] = useState(models[0]);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [showMention, setShowMention] = useState(false);
   const [showFileSubmenu, setShowFileSubmenu] = useState(false);
   const [mentionStyle, setMentionStyle] = useState<React.CSSProperties>({});
-  const [selectedMentions, setSelectedMentions] = useState<SelectedMention[]>([]);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [isEmpty, setIsEmpty] = useState(true);
+  const editorRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const mirrorRef = useRef<HTMLDivElement>(null);
-  const mentionMenuRef = useRef<HTMLDivElement>(null);
 
-  const getCursorPixelPos = (textarea: HTMLTextAreaElement, pos: number) => {
-    if (!mirrorRef.current) return { top: 0, left: 0 };
-    const mirror = mirrorRef.current;
-    const style = window.getComputedStyle(textarea);
-    mirror.style.cssText = `
-      position:absolute;visibility:hidden;white-space:pre-wrap;word-wrap:break-word;overflow:hidden;
-      width:${style.width};font:${style.font};padding:${style.padding};border:${style.border};
-      line-height:${style.lineHeight};letter-spacing:${style.letterSpacing};
-    `;
-    const textBefore = textarea.value.slice(0, pos);
-    mirror.textContent = textBefore;
-    const span = document.createElement("span");
-    span.textContent = "|";
-    mirror.appendChild(span);
-    const top = span.offsetTop - textarea.scrollTop;
-    const left = span.offsetLeft;
-    mirror.textContent = "";
-    return { top, left };
-  };
+  const checkEmpty = useCallback(() => {
+    if (!editorRef.current) return;
+    const text = getTextContent(editorRef.current).trim();
+    const hasChips = editorRef.current.querySelector(`[${CHIP_ATTR}]`) !== null;
+    setIsEmpty(!text && !hasChips);
+  }, []);
 
-  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value;
-    setValue(newValue);
+  const showMentionMenu = useCallback(() => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    const range = sel.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    const menuW = 210;
+    const menuH = 200;
+    let screenX = rect.left;
+    let screenY = rect.bottom + 4;
+    if (screenX + menuW > window.innerWidth) screenX = window.innerWidth - menuW - 8;
+    if (screenX < 8) screenX = 8;
+    if (screenY + menuH > window.innerHeight) screenY = rect.top - menuH - 4;
+    if (screenY < 8) screenY = 8;
+    setMentionStyle({ position: "fixed", top: screenY, left: screenX });
+    setShowMention(true);
+    setShowFileSubmenu(false);
+  }, []);
 
-    const cursorPos = e.target.selectionStart;
-    const textBeforeCursor = newValue.slice(0, cursorPos);
-    const lastAtIndex = textBeforeCursor.lastIndexOf("@");
-
-    if (lastAtIndex !== -1 && (lastAtIndex === 0 || textBeforeCursor[lastAtIndex - 1] === " ")) {
-      const textAfterAt = textBeforeCursor.slice(lastAtIndex + 1);
-      if (!textAfterAt.includes(" ")) {
-        const pos = getCursorPixelPos(e.target, lastAtIndex);
-        const textareaRect = e.target.getBoundingClientRect();
-        const menuW = 210;
-        const menuH = 200;
-        let screenX = textareaRect.left + pos.left;
-        let screenY = textareaRect.top + pos.top + 24;
-        if (screenX + menuW > window.innerWidth) screenX = window.innerWidth - menuW - 8;
-        if (screenX < 8) screenX = 8;
-        if (screenY + menuH > window.innerHeight) screenY = textareaRect.top + pos.top - menuH - 4;
-        if (screenY < 8) screenY = 8;
-        setMentionStyle({ position: 'fixed', top: screenY, left: screenX });
-        setShowMention(true);
-        setShowFileSubmenu(false);
+  const handleEditorInput = useCallback(() => {
+    checkEmpty();
+    // Detect @ trigger
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    const range = sel.getRangeAt(0);
+    const node = range.startContainer;
+    if (node.nodeType !== Node.TEXT_NODE) return;
+    const text = node.textContent || "";
+    const offset = range.startOffset;
+    const textBefore = text.slice(0, offset);
+    const lastAt = textBefore.lastIndexOf("@");
+    if (lastAt !== -1 && (lastAt === 0 || textBefore[lastAt - 1] === " ")) {
+      const afterAt = textBefore.slice(lastAt + 1);
+      if (!afterAt.includes(" ")) {
+        showMentionMenu();
         return;
       }
     }
     setShowMention(false);
     setShowFileSubmenu(false);
-  };
+  }, [checkEmpty, showMentionMenu]);
 
-  const handleSend = () => {
-    const text = value.trim();
-    if (!text && selectedMentions.length === 0) return;
-    setValue("");
-    const mentions = [...selectedMentions];
-    setSelectedMentions([]);
+  const removeAtBeforeCursor = useCallback(() => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    const range = sel.getRangeAt(0);
+    const node = range.startContainer;
+    if (node.nodeType !== Node.TEXT_NODE) return;
+    const text = node.textContent || "";
+    const offset = range.startOffset;
+    const textBefore = text.slice(0, offset);
+    const lastAt = textBefore.lastIndexOf("@");
+    if (lastAt !== -1) {
+      // Remove from @ to cursor
+      node.textContent = text.slice(0, lastAt) + text.slice(offset);
+      // Restore cursor
+      const newRange = document.createRange();
+      newRange.setStart(node, lastAt);
+      newRange.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+    }
+  }, []);
+
+  const insertChipAtCursor = useCallback(
+    (label: string, type: string, fileId?: string) => {
+      if (!editorRef.current) return;
+      editorRef.current.focus();
+      removeAtBeforeCursor();
+
+      const chip = createChipElement(label, type, fileId);
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0) return;
+      const range = sel.getRangeAt(0);
+      range.deleteContents();
+      range.insertNode(chip);
+
+      // Add a space after chip and move cursor there
+      const space = document.createTextNode("\u00A0");
+      chip.after(space);
+      const newRange = document.createRange();
+      newRange.setStartAfter(space);
+      newRange.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+
+      checkEmpty();
+    },
+    [removeAtBeforeCursor, checkEmpty]
+  );
+
+  const handleMentionClick = useCallback(
+    (item: MentionItem) => {
+      if (item.hasSubmenu) {
+        setShowFileSubmenu(true);
+        return;
+      }
+      insertChipAtCursor(item.label, item.id);
+      setShowMention(false);
+      setShowFileSubmenu(false);
+    },
+    [insertChipAtCursor]
+  );
+
+  const handleFileSelect = useCallback(
+    (file: FileItem) => {
+      insertChipAtCursor(file.label, "file", file.id);
+      setShowMention(false);
+      setShowFileSubmenu(false);
+    },
+    [insertChipAtCursor]
+  );
+
+  const handleSend = useCallback(() => {
+    if (!editorRef.current) return;
+    const text = getTextContent(editorRef.current).trim();
+    const mentions = getMentions(editorRef.current);
+    if (!text && mentions.length === 0) return;
+    editorRef.current.innerHTML = "";
+    setIsEmpty(true);
     onSend?.(text, mentions);
-  };
+  }, [onSend]);
 
-  const removeAtFromInput = () => {
-    const cursorPos = textareaRef.current?.selectionStart || 0;
-    const textBeforeCursor = value.slice(0, cursorPos);
-    const lastAtIndex = textBeforeCursor.lastIndexOf("@");
-    if (lastAtIndex !== -1) {
-      const newValue = value.slice(0, lastAtIndex) + value.slice(cursorPos);
-      setValue(newValue);
-    }
-  };
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === "Enter" && !e.shiftKey && !showMention) {
+        e.preventDefault();
+        handleSend();
+        return;
+      }
+      // Backspace: delete chip if cursor is right after one
+      if (e.key === "Backspace") {
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0) return;
+        const range = sel.getRangeAt(0);
+        if (!range.collapsed) return;
 
-  const handleMentionClick = (item: MentionItem) => {
-    if (item.hasSubmenu) {
-      setShowFileSubmenu(true);
-      return;
-    }
-    removeAtFromInput();
-    setSelectedMentions((prev) => [...prev, { type: item.id, label: item.label }]);
-    setShowMention(false);
-    setShowFileSubmenu(false);
-    textareaRef.current?.focus();
-  };
+        const node = range.startContainer;
+        const offset = range.startOffset;
 
-  const handleFileSelect = (file: FileItem) => {
-    removeAtFromInput();
-    // Avoid duplicates
-    setSelectedMentions((prev) => {
-      if (prev.some((m) => m.fileId === file.id)) return prev;
-      return [...prev, { type: "file", label: file.label, fileId: file.id }];
-    });
-    setShowMention(false);
-    setShowFileSubmenu(false);
-    textareaRef.current?.focus();
-  };
+        // Case 1: cursor in a text node at position 0, previous sibling is a chip
+        if (node.nodeType === Node.TEXT_NODE && offset === 0) {
+          const prev = node.previousSibling;
+          if (prev instanceof HTMLElement && prev.hasAttribute(CHIP_ATTR)) {
+            e.preventDefault();
+            prev.remove();
+            checkEmpty();
+            return;
+          }
+        }
 
-  const removeMention = (index: number) => {
-    setSelectedMentions((prev) => prev.filter((_, i) => i !== index));
-  };
+        // Case 2: cursor in the editor div itself, previous child is a chip
+        if (node === editorRef.current && offset > 0) {
+          const child = node.childNodes[offset - 1];
+          if (child instanceof HTMLElement && child.hasAttribute(CHIP_ATTR)) {
+            e.preventDefault();
+            child.remove();
+            checkEmpty();
+            return;
+          }
+        }
+      }
+    },
+    [showMention, handleSend, checkEmpty]
+  );
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -187,56 +320,31 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
   return (
     <div ref={containerRef} className={cn("relative w-full", !compact && "max-w-2xl mx-auto")}>
       <div className="rounded-xl border border-border bg-card shadow-sm">
-        {/* Selected mention chips */}
-        {selectedMentions.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 px-4 pt-3">
-            {selectedMentions.map((mention, i) => (
-              <span
-                key={i}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-primary/10 border border-primary/20 text-xs font-medium text-primary"
-              >
-                {mention.type === "file" ? (
-                  mention.label.endsWith(".json") ? (
-                    <FileJson className="h-3 w-3" />
-                  ) : (
-                    <FileCode className="h-3 w-3" />
-                  )
-                ) : (
-                  <FileText className="h-3 w-3" />
-                )}
-                {mention.label}
-                <button
-                  onClick={() => removeMention(i)}
-                  className="ml-0.5 hover:text-destructive transition-colors"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
-
-        {/* Textarea */}
+        {/* Editable area */}
         <div className="relative">
-          <textarea
-            ref={textareaRef}
-            value={value}
-            onChange={handleInput}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey && !showMention) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
-            placeholder={placeholder || "输入指令，使用 @ 选择资源"}
-            rows={compact ? 2 : 3}
-            className="w-full resize-none border-0 bg-transparent px-4 pt-4 pb-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0"
+          <div
+            ref={editorRef}
+            contentEditable
+            suppressContentEditableWarning
+            onInput={handleEditorInput}
+            onKeyDown={handleKeyDown}
+            className={cn(
+              "w-full border-0 bg-transparent px-4 pt-4 pb-2 text-sm text-foreground focus:outline-none focus:ring-0",
+              compact ? "min-h-[3.5rem]" : "min-h-[5rem]",
+              "whitespace-pre-wrap break-words"
+            )}
+            style={{ overflowWrap: "break-word" }}
           />
+          {/* Placeholder */}
+          {isEmpty && (
+            <div className="absolute left-4 top-4 text-sm text-muted-foreground pointer-events-none select-none">
+              {placeholder || "输入指令，使用 @ 选择资源"}
+            </div>
+          )}
 
           {/* @ Mention Dropdown */}
           {showMention && (
             <div
-              ref={mentionMenuRef}
               className="fixed z-[9999] bg-popover border border-border rounded-lg shadow-lg w-[210px] py-1"
               style={mentionStyle}
               onClick={(e) => e.stopPropagation()}
@@ -268,13 +376,16 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
             </div>
           )}
 
-          {/* File Submenu - rendered as sibling portal to avoid overflow clipping */}
+          {/* File Submenu */}
           {showMention && showFileSubmenu && (
             <div
               className="fixed z-[10000] bg-popover border border-border rounded-lg shadow-lg w-[200px] py-1"
               style={{
                 top: mentionStyle.top,
-                left: typeof mentionStyle.left === 'number' ? mentionStyle.left + 214 : mentionStyle.left,
+                left:
+                  typeof mentionStyle.left === "number"
+                    ? mentionStyle.left + 214
+                    : mentionStyle.left,
               }}
               onClick={(e) => e.stopPropagation()}
             >
@@ -293,7 +404,6 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
               ))}
             </div>
           )}
-          <div ref={mirrorRef} aria-hidden="true" />
         </div>
 
         {/* Bottom Controls */}
