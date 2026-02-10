@@ -67,7 +67,7 @@ function PromptContent({ prompt }: { prompt: string }) {
   // Split by {placeholder} and [default|options]
   const parts = prompt.split(/(\{[^}]+\}|\[[^\]]+\])/g);
   return (
-    <p className="text-sm text-foreground leading-relaxed">
+    <p className="text-sm text-foreground" style={{ lineHeight: '2.2' }}>
       {parts.map((part, i) => {
         if (part.startsWith("{") && part.endsWith("}")) {
           return (
