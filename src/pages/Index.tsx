@@ -22,14 +22,6 @@ const Index = () => {
         {activeView === "dev" && <DevWorkbenchView />}
         {activeView === "settings" && <SettingsView />}
         {activeView === "profile" && <ProfileView />}
-        {activeView !== "qa" && activeView !== "chat" && activeView !== "chat2" && activeView !== "knowledge" && activeView !== "dev" && activeView !== "settings" && (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center space-y-2">
-              <h2 className="text-lg font-semibold text-foreground">即将推出</h2>
-              <p className="text-sm text-muted-foreground">此功能正在开发中</p>
-            </div>
-          </div>
-        )}
       </main>
     </div>
   );
