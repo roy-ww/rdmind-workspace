@@ -3,6 +3,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { DashboardView } from "@/pages/DashboardView";
 import { KnowledgeBaseView } from "@/pages/KnowledgeBaseView";
 import { DevWorkbenchView } from "@/pages/DevWorkbenchView";
+import { AIChatView } from "@/pages/AIChatView";
 
 const Index = () => {
   const [activeView, setActiveView] = useState("qa");
