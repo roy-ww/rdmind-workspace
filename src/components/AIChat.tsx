@@ -85,7 +85,7 @@ export function AIChat({ className }: AIChatProps) {
       </div>
 
       {/* Input pinned to bottom */}
-      <div className="p-3 border-t border-border shrink-0">
+      <div className="p-3 shrink-0">
         <ChatInput
           compact
           onSend={handleSend}
