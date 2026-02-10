@@ -132,8 +132,17 @@
   .brand-gradient {
     background: linear-gradient(135deg, hsl(220 10% 20%), hsl(220 8% 35%));
   }
+  .dark .brand-gradient {
+    background: linear-gradient(135deg, hsl(220 8% 45%), hsl(220 6% 58%));
+  }
   .text-brand-gradient {
     background: linear-gradient(135deg, hsl(220 10% 20%), hsl(220 8% 35%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .dark .text-brand-gradient {
+    background: linear-gradient(135deg, hsl(220 8% 55%), hsl(220 6% 70%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
