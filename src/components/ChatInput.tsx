@@ -61,13 +61,40 @@ const PLACEHOLDER_ATTR = "data-template-placeholder";
 const DROPDOWN_ATTR = "data-template-dropdown";
 
 function createPlaceholderElement(text: string): HTMLSpanElement {
-  const el = document.createElement("span");
-  el.setAttribute(PLACEHOLDER_ATTR, "true");
-  el.contentEditable = "true";
-  el.className =
-    "inline-block px-2 py-0.5 mx-0.5 rounded-md border border-dashed border-muted-foreground/40 text-sm text-primary align-middle min-w-[2em] outline-none focus:border-primary/50 focus:bg-primary/5 transition-colors";
-  el.textContent = text;
-  return el;
+  const wrapper = document.createElement("span");
+  wrapper.setAttribute(PLACEHOLDER_ATTR, "true");
+  wrapper.className =
+    "inline-block relative mx-0.5 align-middle";
+
+  const editable = document.createElement("span");
+  editable.contentEditable = "true";
+  editable.className =
+    "inline-block px-2 py-0.5 rounded-md border border-dashed border-muted-foreground/40 text-sm text-foreground min-w-[2em] outline-none focus:border-primary/50 focus:bg-primary/5 transition-colors";
+  editable.style.minWidth = `${Math.max(text.length * 0.75, 2)}em`;
+
+  const placeholder = document.createElement("span");
+  placeholder.className =
+    "absolute left-2 top-1/2 -translate-y-1/2 text-sm text-muted-foreground/60 pointer-events-none select-none whitespace-nowrap";
+  placeholder.textContent = text;
+  placeholder.setAttribute("data-placeholder-text", "true");
+
+  wrapper.appendChild(editable);
+  wrapper.appendChild(placeholder);
+
+  // Hide placeholder when content exists
+  editable.addEventListener("input", () => {
+    placeholder.style.display = editable.textContent?.trim() ? "none" : "";
+  });
+  editable.addEventListener("focus", () => {
+    if (!editable.textContent?.trim()) {
+      placeholder.style.opacity = "0.4";
+    }
+  });
+  editable.addEventListener("blur", () => {
+    placeholder.style.opacity = "";
+  });
+
+  return wrapper;
 }
 
 function createDropdownElement(defaultVal: string, options: string[]): HTMLSelectElement {
