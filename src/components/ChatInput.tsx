@@ -57,6 +57,17 @@ export interface SelectedMention {
 }
 
 const CHIP_ATTR = "data-mention-chip";
+const PLACEHOLDER_ATTR = "data-template-placeholder";
+
+function createPlaceholderElement(text: string): HTMLSpanElement {
+  const el = document.createElement("span");
+  el.setAttribute(PLACEHOLDER_ATTR, "true");
+  el.contentEditable = "true";
+  el.className =
+    "inline-block px-2 py-0.5 mx-0.5 rounded-md border border-dashed border-muted-foreground/40 text-sm text-primary align-middle min-w-[2em] outline-none focus:border-primary/50 focus:bg-primary/5 transition-colors";
+  el.textContent = text;
+  return el;
+}
 
 function createChipElement(label: string, type: string, fileId?: string): HTMLSpanElement {
   const chip = document.createElement("span");
@@ -121,6 +132,7 @@ function getMentions(el: HTMLDivElement): SelectedMention[] {
 
 export interface ChatInputHandle {
   setContent: (text: string) => void;
+  setTemplateContent: (templateName: string, prompt: string) => void;
 }
 
 interface ChatInputProps {
@@ -136,15 +148,33 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function Ch
   const [showFileSubmenu, setShowFileSubmenu] = useState(false);
   const [mentionStyle, setMentionStyle] = useState<React.CSSProperties>({});
   const [isEmpty, setIsEmpty] = useState(true);
+  const [activeTemplate, setActiveTemplate] = useState<string | null>(null);
   const editorRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const fillEditorWithTemplate = useCallback((prompt: string) => {
+    if (!editorRef.current) return;
+    editorRef.current.innerHTML = "";
+    // Parse prompt: split by {placeholder} and create inline elements
+    const parts = prompt.split(/(\{[^}]+\})/g);
+    parts.forEach((part) => {
+      if (part.startsWith("{") && part.endsWith("}")) {
+        const placeholder = createPlaceholderElement(part.slice(1, -1));
+        editorRef.current!.appendChild(placeholder);
+      } else if (part) {
+        editorRef.current!.appendChild(document.createTextNode(part));
+      }
+    });
+    setIsEmpty(false);
+    editorRef.current.focus();
+  }, []);
 
   useImperativeHandle(ref, () => ({
     setContent: (text: string) => {
       if (!editorRef.current) return;
       editorRef.current.textContent = text;
       setIsEmpty(!text.trim());
-      // Move cursor to end
+      setActiveTemplate(null);
       const sel = window.getSelection();
       if (sel) {
         const range = document.createRange();
@@ -155,7 +185,11 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function Ch
       }
       editorRef.current.focus();
     },
-  }), []);
+    setTemplateContent: (templateName: string, prompt: string) => {
+      setActiveTemplate(templateName);
+      fillEditorWithTemplate(prompt);
+    },
+  }), [fillEditorWithTemplate]);
 
   const checkEmpty = useCallback(() => {
     if (!editorRef.current) return;
@@ -342,6 +376,25 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function Ch
   return (
     <div ref={containerRef} className={cn("relative w-full", !compact && "max-w-2xl mx-auto")}>
       <div className="rounded-xl border border-border bg-card shadow-sm">
+        {/* Active template banner */}
+        {activeTemplate && (
+          <div className="flex items-center gap-2 px-4 py-2 bg-primary/5 border-b border-primary/10 rounded-t-xl">
+            <FileText className="h-3.5 w-3.5 text-primary" />
+            <span className="text-sm font-medium text-primary">{activeTemplate}</span>
+            <button
+              onClick={() => {
+                setActiveTemplate(null);
+                if (editorRef.current) {
+                  editorRef.current.innerHTML = "";
+                  setIsEmpty(true);
+                }
+              }}
+              className="ml-1 text-primary/60 hover:text-primary transition-colors"
+            >
+              <span className="text-sm">×</span>
+            </button>
+          </div>
+        )}
         {/* Editable area */}
         <div className="relative">
           <div

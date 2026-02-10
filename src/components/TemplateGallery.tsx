@@ -83,7 +83,7 @@ function PromptContent({ prompt }: { prompt: string }) {
 }
 
 interface TemplateGalleryProps {
-  onSendTemplate?: (prompt: string) => void;
+  onSendTemplate?: (prompt: string, templateName: string) => void;
 }
 
 export function TemplateGallery({ onSendTemplate }: TemplateGalleryProps) {
@@ -99,7 +99,7 @@ export function TemplateGallery({ onSendTemplate }: TemplateGalleryProps) {
 
   const handleSend = () => {
     if (selectedTemplate) {
-      onSendTemplate?.(selectedTemplate.prompt);
+      onSendTemplate?.(selectedTemplate.prompt, selectedTemplate.title);
       setSelectedTemplate(null);
     }
   };

@@ -7,8 +7,8 @@ import { TemplateGallery } from "@/components/TemplateGallery";
 export function DashboardView() {
   const chatInputRef = useRef<ChatInputHandle>(null);
 
-  const handleSendTemplate = (prompt: string) => {
-    chatInputRef.current?.setContent(prompt);
+  const handleSendTemplate = (prompt: string, templateName: string) => {
+    chatInputRef.current?.setTemplateContent(templateName, prompt);
   };
 
   return (
