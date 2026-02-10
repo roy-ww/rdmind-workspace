@@ -22,6 +22,7 @@ interface AppSidebarProps {
 const navItems = [
   { id: "qa", label: "通用问答", icon: MessageSquare },
   { id: "chat", label: "AI 会话", icon: Sparkles },
+  { id: "chat2", label: "AI 会话2", icon: MessageSquare },
   { id: "knowledge", label: "AI 智库", icon: BookOpen },
   { id: "creative", label: "创作工作台", icon: PenTool },
   { id: "dev", label: "开发工作台", icon: Code },
