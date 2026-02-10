@@ -7,6 +7,8 @@ import {
   ChevronRight,
   ChevronDown,
   Brain,
+  FileText,
+  Search,
 } from "lucide-react";
 import { FileTree } from "@/components/FileTree";
 import { MarkdownEditor } from "@/components/MarkdownEditor";
@@ -27,13 +29,27 @@ const features = [
 const quickPrompts = ["快速生成今日日记", "总结本周项目进度", "整理知识库内容"];
 
 interface ChatMessage {
-  type: "user" | "thinking" | "ai";
+  type: "user" | "thinking" | "ai" | "tool";
   content: string;
+  toolName?: string;
+  toolResult?: string;
 }
 
 function generateDemoResponse(userText: string): ChatMessage[] {
   return [
     { type: "user", content: userText },
+    {
+      type: "tool",
+      content: "待处理笔记.md",
+      toolName: "读取文件",
+      toolResult: "成功读取，共 112 行",
+    },
+    {
+      type: "tool",
+      content: "项目A_规划.md",
+      toolName: "搜索知识库",
+      toolResult: "匹配到 3 篇相关文档",
+    },
     {
       type: "thinking",
       content: `正在分析用户的问题："${userText}"...\n\n1. 检索知识库中的相关文档\n2. 匹配到 3 篇相关文档\n3. 综合分析文档内容与用户问题的关联性\n4. 生成结构化回答`,
@@ -43,6 +59,22 @@ function generateDemoResponse(userText: string): ChatMessage[] {
       content: `根据您的知识库内容，我为您整理了以下信息：\n\n**核心发现：**\n- 项目当前处于 Q2 开发阶段，核心功能开发进度约 60%\n- 知识库 CRUD 和 Markdown 编辑器已基本完成\n- AI 对话集成模块正在开发中\n\n**建议下一步行动：**\n1. 完善语义检索功能的技术方案\n2. 开始 AI 对话模块的原型开发\n3. 安排一次技术评审会议\n\n如需了解更多细节，请随时提问。`,
     },
   ];
+}
+
+function ToolCallBlock({ msg }: { msg: ChatMessage }) {
+  return (
+    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-muted/40 text-xs text-muted-foreground">
+      {msg.toolName === "读取文件" ? (
+        <FileText className="h-3.5 w-3.5 text-primary shrink-0" />
+      ) : (
+        <Search className="h-3.5 w-3.5 text-primary shrink-0" />
+      )}
+      <span className="font-medium text-foreground">{msg.toolName}</span>
+      <span className="text-muted-foreground">·</span>
+      <span>{msg.content}</span>
+      <span className="ml-auto text-muted-foreground/70">{msg.toolResult}</span>
+    </div>
+  );
 }
 
 export function KnowledgeBaseView() {
@@ -77,7 +109,7 @@ export function KnowledgeBaseView() {
             <span>docs_studio</span>
           </div>
         </div>
-        <div className="flex-1 overflow-auto p-2">
+        <div className="flex-1 overflow-auto hide-scrollbar p-2">
           <FileTree onFileSelect={setSelectedFile} selectedFile={selectedFile} />
         </div>
       </div>
@@ -127,7 +159,7 @@ export function KnowledgeBaseView() {
           </div>
         </div>
 
-        <div className="flex-1 p-4 space-y-3 overflow-auto">
+        <div className="flex-1 p-4 space-y-3 overflow-auto hide-scrollbar">
           {chatMessages.length === 0 ? (
             <div className="space-y-3">
               {[
@@ -144,7 +176,7 @@ export function KnowledgeBaseView() {
               ))}
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {chatMessages.map((msg, i) => {
                 if (msg.type === "user") {
                   return (
@@ -154,6 +186,9 @@ export function KnowledgeBaseView() {
                       </div>
                     </div>
                   );
+                }
+                if (msg.type === "tool") {
+                  return <ToolCallBlock key={i} msg={msg} />;
                 }
                 if (msg.type === "thinking") {
                   return (
