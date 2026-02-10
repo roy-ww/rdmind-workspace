@@ -1,14 +1,12 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import {
   BookOpen,
   CheckCircle2,
-  ArrowRight,
   ChevronRight,
 } from "lucide-react";
 import { FileTree } from "@/components/FileTree";
 import { MarkdownEditor } from "@/components/MarkdownEditor";
-import { ChatInput } from "@/components/ChatInput";
-import { AIChatMessages, type ChatMessage } from "@/components/AIChatMessages";
+import { AIChat } from "@/components/AIChat";
 
 const features = [
   "24小时在线的智能管家，随时回答你的问题",
