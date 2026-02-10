@@ -208,8 +208,8 @@ export function TemplateCreator({ open, onOpenChange, onCreated }: TemplateCreat
                         value={promptText}
                         onChange={(e) => handleTextChange(e.target.value)}
                         placeholder="在此输入模板内容，使用 {参数名} 标记可变参数..."
-                        className="w-full h-full resize-none border-0 bg-transparent p-4 text-sm text-transparent placeholder:text-muted-foreground focus:outline-none focus:ring-0 font-mono relative z-10 cursor-text caret-foreground"
-                        style={{ caretColor: 'var(--foreground)' }}
+                        className="w-full h-full resize-none border-0 bg-transparent p-4 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-0 font-mono relative z-10 cursor-text"
+                        style={{ color: 'transparent', caretColor: 'hsl(var(--foreground))' }}
                         maxLength={30000}
                       />
                     </div>
