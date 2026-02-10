@@ -635,9 +635,9 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(function Ch
                         model.id === selectedModel.id && "text-primary bg-primary/5"
                       )}
                     >
-                      <div>
-                        <div className="font-medium">{model.label}</div>
-                        <div className="text-[10px] text-muted-foreground">{model.desc}</div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-medium">{model.label}</span>
+                        <span className="text-[10px] text-muted-foreground">{model.desc}</span>
                       </div>
                     </button>
                   ))}
