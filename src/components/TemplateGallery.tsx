@@ -148,7 +148,7 @@ export function TemplateGallery({ onSendTemplate }: TemplateGalleryProps) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="搜索模板"
-            className="pl-8 pr-3 py-1.5 rounded-lg border border-border bg-card text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring w-44"
+            className="pl-8 pr-3 py-1.5 rounded-lg border border-border bg-card text-sm leading-relaxed placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring w-44"
           />
         </div>
       </div>
