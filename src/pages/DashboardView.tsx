@@ -31,7 +31,7 @@ export function DashboardView() {
       </div>
 
       {/* Template Gallery - scrollable area */}
-      <div className="w-full max-w-3xl mx-auto px-6 pb-8 flex-1 min-h-0 overflow-y-auto">
+      <div className="w-full max-w-3xl mx-auto px-6 pb-8 flex-1 min-h-0 overflow-y-auto styled-scrollbar">
         <TemplateGallery onSendTemplate={handleSendTemplate} />
       </div>
     </div>
