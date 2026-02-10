@@ -70,48 +70,7 @@ export function KnowledgeBaseView() {
       )}
 
       {/* Right Panel - Assistant Chat */}
-      <div className="w-80 border-l border-border bg-sidebar flex flex-col shrink-0 h-full">
-        {/* Header */}
-        <div className="px-4 py-3 border-b border-border shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full brand-gradient flex items-center justify-center">
-              <BookOpen className="h-3 w-3 text-primary-foreground" />
-            </div>
-            <span className="text-sm font-medium text-foreground">
-              {hasMessages ? "对话中" : "开始对话"}
-            </span>
-          </div>
-        </div>
-
-        {/* Chat messages area - grows to fill available space */}
-        <div className="flex-1 p-4 overflow-auto hide-scrollbar min-h-0">
-          <AIChatMessages messages={chatMessages} ref={chatEndRef} />
-        </div>
-
-        {/* Quick Prompt Chips */}
-        <div className="px-4 pb-2 shrink-0">
-          <div className="flex flex-wrap gap-1.5">
-            {quickPrompts.map((prompt) => (
-              <button
-                key={prompt}
-                onClick={() => handleSend(prompt)}
-                className="px-2.5 py-1 rounded-full border border-border bg-card text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
-              >
-                {prompt}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Input pinned to bottom */}
-        <div className="p-3 border-t border-border shrink-0">
-          <ChatInput
-            compact
-            onSend={handleSend}
-            placeholder="发送消息给 Assistant"
-          />
-        </div>
-      </div>
+      <AIChat />
     </div>
   );
 }

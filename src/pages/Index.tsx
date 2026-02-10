@@ -4,6 +4,7 @@ import { DashboardView } from "@/pages/DashboardView";
 import { KnowledgeBaseView } from "@/pages/KnowledgeBaseView";
 import { DevWorkbenchView } from "@/pages/DevWorkbenchView";
 import { AIChatView } from "@/pages/AIChatView";
+import { AIChatView2 } from "@/pages/AIChatView2";
 
 const Index = () => {
   const [activeView, setActiveView] = useState("qa");
