@@ -42,10 +42,11 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
   const [selectedModel, setSelectedModel] = useState(models[0]);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [showMention, setShowMention] = useState(false);
-  const [mentionPos, setMentionPos] = useState<{ top: number; left: number; flipLeft: boolean }>({ top: 0, left: 0, flipLeft: false });
+  const [mentionStyle, setMentionStyle] = useState<React.CSSProperties>({});
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const mirrorRef = useRef<HTMLDivElement>(null);
+  const mentionMenuRef = useRef<HTMLDivElement>(null);
 
   const getCursorPixelPos = (textarea: HTMLTextAreaElement, pos: number) => {
     if (!mirrorRef.current) return { top: 0, left: 0 };
@@ -79,11 +80,18 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
       const textAfterAt = textBeforeCursor.slice(lastAtIndex + 1);
       if (!textAfterAt.includes(" ")) {
         const pos = getCursorPixelPos(e.target, lastAtIndex);
-        const containerRect = containerRef.current?.getBoundingClientRect();
-        const menuWidth = 210;
-        const spaceRight = containerRect ? containerRect.right - (containerRect.left + pos.left + 16) : 999;
-        const flipLeft = spaceRight < menuWidth;
-        setMentionPos({ top: pos.top, left: pos.left, flipLeft });
+        const textareaRect = e.target.getBoundingClientRect();
+        const menuW = 210;
+        const menuH = 200;
+        // Absolute screen position of cursor
+        let screenX = textareaRect.left + pos.left;
+        let screenY = textareaRect.top + pos.top + 24;
+        // Clamp to viewport
+        if (screenX + menuW > window.innerWidth) screenX = window.innerWidth - menuW - 8;
+        if (screenX < 8) screenX = 8;
+        if (screenY + menuH > window.innerHeight) screenY = textareaRect.top + pos.top - menuH - 4;
+        if (screenY < 8) screenY = 8;
+        setMentionStyle({ position: 'fixed', top: screenY, left: screenX });
         setShowMention(true);
         return;
       }
@@ -141,13 +149,9 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
           {/* @ Mention Dropdown */}
           {showMention && (
             <div
-              className="absolute z-50 bg-popover border border-border rounded-lg shadow-lg w-[210px] py-1 overflow-hidden"
-              style={{
-                top: `${mentionPos.top + 24}px`,
-                ...(mentionPos.flipLeft
-                  ? { right: `calc(100% - ${mentionPos.left + 16}px)` }
-                  : { left: `${mentionPos.left + 16}px` }),
-              }}
+              ref={mentionMenuRef}
+              className="fixed z-[9999] bg-popover border border-border rounded-lg shadow-lg w-[210px] py-1 overflow-hidden"
+              style={mentionStyle}
               onClick={(e) => e.stopPropagation()}
             >
               {mentionItems.map((item) => (
