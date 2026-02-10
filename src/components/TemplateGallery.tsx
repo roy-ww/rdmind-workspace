@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogContent,
 } from "@/components/ui/dialog";
+import { TemplateCreator } from "@/components/TemplateCreator";
 
 const tabs = ["公开模板", "我收藏的", "我创建的"];
 
@@ -104,6 +105,8 @@ export function TemplateGallery({ onSendTemplate }: TemplateGalleryProps) {
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [search, setSearch] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+  const [showCreator, setShowCreator] = useState(false);
+  const [userTemplates, setUserTemplates] = useState<Template[]>([]);
 
   const handleCopy = () => {
     if (selectedTemplate) {
@@ -164,7 +167,10 @@ export function TemplateGallery({ onSendTemplate }: TemplateGalleryProps) {
             </p>
           </div>
           <div className="flex items-center gap-2 mt-4">
-            <button className="px-4 py-1.5 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-accent transition-colors">
+            <button
+              onClick={() => setShowCreator(true)}
+              className="px-4 py-1.5 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-accent transition-colors"
+            >
               创建
             </button>
             <button className="px-4 py-1.5 rounded-lg border border-border bg-card text-xs font-medium text-foreground hover:bg-accent transition-colors inline-flex items-center gap-1">
@@ -173,6 +179,24 @@ export function TemplateGallery({ onSendTemplate }: TemplateGalleryProps) {
             </button>
           </div>
         </div>
+
+        {/* User created templates */}
+        {userTemplates.map((t) => (
+          <div
+            key={t.title}
+            onClick={() => setSelectedTemplate(t)}
+            className="group p-4 rounded-xl border border-primary/20 bg-primary/5 hover:shadow-md transition-all cursor-pointer"
+          >
+            <div className="flex items-start justify-between mb-2">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Pencil className="h-4 w-4 text-primary" />
+              </div>
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary">自建</span>
+            </div>
+            <h4 className="text-sm font-medium text-foreground mb-1">{t.title}</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">{t.desc}</p>
+          </div>
+        ))}
 
         {templates.map((t) => (
           <div
@@ -244,6 +268,18 @@ export function TemplateGallery({ onSendTemplate }: TemplateGalleryProps) {
           )}
         </DialogContent>
       </Dialog>
+      {/* Template Creator Dialog */}
+      <TemplateCreator
+        open={showCreator}
+        onOpenChange={setShowCreator}
+        onCreated={(t) => {
+          setUserTemplates((prev) => [...prev, {
+            ...t,
+            icon: Pencil,
+            stars: 0,
+          }]);
+        }}
+      />
     </div>
   );
 }
