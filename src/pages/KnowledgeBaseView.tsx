@@ -4,19 +4,11 @@ import {
   CheckCircle2,
   ArrowRight,
   ChevronRight,
-  ChevronDown,
-  Brain,
-  FileText,
-  Search,
 } from "lucide-react";
 import { FileTree } from "@/components/FileTree";
 import { MarkdownEditor } from "@/components/MarkdownEditor";
 import { ChatInput } from "@/components/ChatInput";
-import {
-  Collapsible,
-  CollapsibleTrigger,
-  CollapsibleContent,
-} from "@/components/ui/collapsible";
+import { AIChatMessages, type ChatMessage } from "@/components/AIChatMessages";
 
 const features = [
   "24小时在线的智能管家，随时回答你的问题",
@@ -26,13 +18,6 @@ const features = [
 ];
 
 const quickPrompts = ["快速生成今日日记", "总结本周项目进度", "整理知识库内容"];
-
-interface ChatMessage {
-  type: "user" | "thinking" | "ai" | "tool";
-  content: string;
-  toolName?: string;
-  toolResult?: string;
-}
 
 function generateDemoResponse(userText: string): ChatMessage[] {
   return [
@@ -60,22 +45,6 @@ function generateDemoResponse(userText: string): ChatMessage[] {
   ];
 }
 
-function ToolCallBlock({ msg }: { msg: ChatMessage }) {
-  return (
-    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-muted/40 text-xs text-muted-foreground">
-      {msg.toolName === "读取文件" ? (
-        <FileText className="h-3.5 w-3.5 text-primary shrink-0" />
-      ) : (
-        <Search className="h-3.5 w-3.5 text-primary shrink-0" />
-      )}
-      <span className="font-medium text-foreground">{msg.toolName}</span>
-      <span className="text-muted-foreground">·</span>
-      <span>{msg.content}</span>
-      <span className="ml-auto text-muted-foreground/70">{msg.toolResult}</span>
-    </div>
-  );
-}
-
 export function KnowledgeBaseView() {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -89,6 +58,8 @@ export function KnowledgeBaseView() {
     const msgs = generateDemoResponse(text);
     setChatMessages((prev) => [...prev, ...msgs]);
   };
+
+  const hasMessages = chatMessages.length > 0;
 
   return (
     <div className="flex-1 flex min-h-0 h-screen">
@@ -109,7 +80,7 @@ export function KnowledgeBaseView() {
         </div>
       </div>
 
-      {/* Main Content - scrollable when content is long */}
+      {/* Main Content */}
       {selectedFile ? (
         <MarkdownEditor fileName={selectedFile} />
       ) : (
@@ -141,77 +112,23 @@ export function KnowledgeBaseView() {
         </div>
       )}
 
-      {/* Right Panel - Assistant Chat (fixed height) */}
+      {/* Right Panel - Assistant Chat */}
       <div className="w-80 border-l border-border bg-sidebar flex flex-col shrink-0 h-full">
+        {/* Header */}
         <div className="px-4 py-3 border-b border-border shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-full brand-gradient flex items-center justify-center">
               <BookOpen className="h-3 w-3 text-primary-foreground" />
             </div>
             <span className="text-sm font-medium text-foreground">
-              {chatMessages.length > 0 ? "对话中" : "开始对话"}
+              {hasMessages ? "对话中" : "开始对话"}
             </span>
           </div>
         </div>
 
-        <div className="flex-1 p-4 space-y-3 overflow-auto hide-scrollbar min-h-0">
-          {chatMessages.length === 0 ? (
-            <div className="space-y-3">
-              {[
-                "访问当前文档相关的问题，获取精准回答",
-                "请求总结、翻译或改写文档内容",
-                "基于知识库进行跨文档检索和问答",
-              ].map((tip) => (
-                <div key={tip} className="flex items-start gap-2">
-                  <ArrowRight className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" />
-                  <span className="text-xs text-muted-foreground leading-relaxed">
-                    {tip}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {chatMessages.map((msg, i) => {
-                if (msg.type === "user") {
-                  return (
-                    <div key={i} className="flex justify-end">
-                      <div className="max-w-[85%] rounded-2xl rounded-br-sm px-3.5 py-2 bg-primary text-primary-foreground text-xs leading-relaxed">
-                        {msg.content}
-                      </div>
-                    </div>
-                  );
-                }
-                if (msg.type === "tool") {
-                  return <ToolCallBlock key={i} msg={msg} />;
-                }
-                if (msg.type === "thinking") {
-                  return (
-                    <Collapsible key={i} defaultOpen={false}>
-                      <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors group w-full">
-                        <Brain className="h-3 w-3" />
-                        <span className="italic">思考过程</span>
-                        <ChevronDown className="h-3 w-3 ml-auto transition-transform group-data-[state=open]:rotate-180" />
-                      </CollapsibleTrigger>
-                      <CollapsibleContent>
-                        <div className="mt-1.5 rounded-lg bg-muted/50 border border-border px-3 py-2 text-xs text-muted-foreground italic whitespace-pre-line leading-relaxed">
-                          {msg.content}
-                        </div>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  );
-                }
-                return (
-                  <div key={i} className="flex justify-start">
-                    <div className="max-w-[90%] rounded-2xl rounded-bl-sm px-3.5 py-2.5 bg-muted text-foreground text-xs leading-relaxed whitespace-pre-line">
-                      {msg.content}
-                    </div>
-                  </div>
-                );
-              })}
-              <div ref={chatEndRef} />
-            </div>
-          )}
+        {/* Chat messages area - grows to fill available space */}
+        <div className="flex-1 p-4 overflow-auto hide-scrollbar min-h-0">
+          <AIChatMessages messages={chatMessages} ref={chatEndRef} />
         </div>
 
         {/* Quick Prompt Chips */}
@@ -229,7 +146,7 @@ export function KnowledgeBaseView() {
           </div>
         </div>
 
-        {/* Reused ChatInput component */}
+        {/* Input pinned to bottom */}
         <div className="p-3 border-t border-border shrink-0">
           <ChatInput
             compact
