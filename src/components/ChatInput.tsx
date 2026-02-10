@@ -114,25 +114,18 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
           {/* @ Mention Dropdown */}
           {showMention && (
             <div
-              className="absolute bottom-full left-4 mb-2 z-50 bg-popover border border-border rounded-xl shadow-lg w-60 py-1.5 overflow-hidden"
+              className="absolute bottom-full left-4 mb-2 z-50 bg-popover border border-border rounded-lg shadow-lg w-52 py-1 overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">
-                选择资源
-              </div>
               {mentionItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => insertMention(item)}
-                  className="flex items-center gap-3 w-full px-3 py-2.5 text-sm hover:bg-accent transition-colors"
+                  className="flex items-center gap-2.5 w-full px-3 py-1.5 text-sm hover:bg-accent transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                    <item.icon className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <div className="text-left">
-                    <div className="text-sm font-medium text-foreground">{item.label}</div>
-                    <div className="text-xs text-muted-foreground">{item.desc}</div>
-                  </div>
+                  <item.icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  <span className="text-sm text-foreground">{item.label}</span>
+                  <span className="text-xs text-muted-foreground ml-auto">{item.desc}</span>
                 </button>
               ))}
             </div>
