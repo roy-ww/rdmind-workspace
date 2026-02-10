@@ -93,7 +93,7 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
 
   return (
     <div ref={containerRef} className={cn("relative w-full", !compact && "max-w-2xl mx-auto")}>
-      <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+      <div className="rounded-xl border border-border bg-card shadow-sm">
         {/* Textarea */}
         <div className="relative">
           <textarea
@@ -145,7 +145,7 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
                 <ChevronDown className="h-3 w-3" />
               </button>
               {showModelDropdown && (
-                <div className="absolute bottom-full left-0 mb-1 z-50 bg-popover border border-border rounded-lg shadow-lg w-52 py-1">
+                <div className="absolute bottom-full left-0 mb-1 z-50 bg-popover border border-border rounded-lg shadow-lg w-44 py-0.5">
                   {models.map((model) => (
                     <button
                       key={model.id}
@@ -154,13 +154,13 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
                         setShowModelDropdown(false);
                       }}
                       className={cn(
-                        "flex items-center justify-between w-full px-3 py-2 text-sm hover:bg-accent transition-colors",
+                        "flex items-center w-full px-3 py-1.5 text-xs hover:bg-accent transition-colors",
                         model.id === selectedModel.id && "text-primary bg-primary/5"
                       )}
                     >
                       <div>
                         <div className="font-medium">{model.label}</div>
-                        <div className="text-xs text-muted-foreground">{model.desc}</div>
+                        <div className="text-[10px] text-muted-foreground">{model.desc}</div>
                       </div>
                     </button>
                   ))}
