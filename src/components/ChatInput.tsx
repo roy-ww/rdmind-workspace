@@ -80,11 +80,18 @@ export function ChatInput({ compact = false, onSend, placeholder }: ChatInputPro
       const textAfterAt = textBeforeCursor.slice(lastAtIndex + 1);
       if (!textAfterAt.includes(" ")) {
         const pos = getCursorPixelPos(e.target, lastAtIndex);
-        const containerRect = containerRef.current?.getBoundingClientRect();
-        const menuWidth = 210;
-        const spaceRight = containerRect ? containerRect.right - (containerRect.left + pos.left + 16) : 999;
-        const flipLeft = spaceRight < menuWidth;
-        setMentionPos({ top: pos.top, left: pos.left, flipLeft });
+        const textareaRect = e.target.getBoundingClientRect();
+        const menuW = 210;
+        const menuH = 200;
+        // Absolute screen position of cursor
+        let screenX = textareaRect.left + pos.left;
+        let screenY = textareaRect.top + pos.top + 24;
+        // Clamp to viewport
+        if (screenX + menuW > window.innerWidth) screenX = window.innerWidth - menuW - 8;
+        if (screenX < 8) screenX = 8;
+        if (screenY + menuH > window.innerHeight) screenY = textareaRect.top + pos.top - menuH - 4;
+        if (screenY < 8) screenY = 8;
+        setMentionStyle({ position: 'fixed', top: screenY, left: screenX });
         setShowMention(true);
         return;
       }
