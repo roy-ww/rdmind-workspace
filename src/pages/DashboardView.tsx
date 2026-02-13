@@ -15,7 +15,7 @@ export function DashboardView() {
     <div className="flex-1 flex flex-col items-center overflow-auto">
       <div className="w-full max-w-3xl mx-auto px-6 py-16 flex flex-col gap-8">
         {/* Header */}
-        <div className="w-full space-y-1">
+        <div className="w-full space-y-1 pl-4">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
             <span className="text-base text-muted-foreground">你好，欢迎回来</span>
