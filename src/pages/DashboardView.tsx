@@ -13,7 +13,7 @@ export function DashboardView() {
 
   return (
     <div className="flex-1 flex flex-col items-center overflow-auto">
-      <div className="w-full max-w-3xl mx-auto px-6 py-16 flex flex-col items-center gap-8">
+      <div className="w-full max-w-3xl mx-auto px-6 py-16 flex flex-col gap-8">
         {/* Header */}
         <div className="w-full space-y-1">
           <div className="flex items-center gap-2">
