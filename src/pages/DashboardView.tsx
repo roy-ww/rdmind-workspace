@@ -15,12 +15,12 @@ export function DashboardView() {
     <div className="flex-1 flex flex-col items-center overflow-auto">
       <div className="w-full max-w-3xl mx-auto px-6 py-16 flex flex-col items-center gap-8">
         {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Sparkles className="h-7 w-7 text-primary" />
+        <div className="w-full space-y-1">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <span className="text-base text-muted-foreground">你好，欢迎回来</span>
           </div>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">RDMind</h1>
-          <p className="text-muted-foreground">欢迎来到工作空间</p>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">需要我为你做些什么？</h1>
         </div>
 
         {/* Chat Input */}
