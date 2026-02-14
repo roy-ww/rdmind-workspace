@@ -50,9 +50,10 @@ export function AppSidebar({ activeView, onNavigate }: AppSidebarProps) {
         {!collapsed && (
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-foreground text-sm tracking-tight">
-              RDMind Studio
-            </span>
+            <div className="flex flex-col leading-none">
+              <span className="font-semibold text-foreground text-sm tracking-tight">星图</span>
+              <span className="text-[9px] text-muted-foreground">powered by RDMind</span>
+            </div>
           </div>
         )}
         <button
