@@ -117,28 +117,28 @@ export function AppSidebar({ activeView, onNavigate }: AppSidebarProps) {
           {!collapsed && <span>{theme === "dark" ? "浅色模式" : "深色模式"}</span>}
         </button>
         <button
-          onClick={() => onNavigate("settings")}
-          className={cn(
-            "flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm transition-colors",
-            activeView === "settings"
-              ? "bg-primary/10 text-primary font-medium"
-              : "text-muted-foreground hover:bg-accent hover:text-foreground"
-          )}
+          disabled
+          className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-muted-foreground/50 cursor-not-allowed transition-colors"
         >
           <Settings className="h-4 w-4 shrink-0" />
-          {!collapsed && <span>设置</span>}
+          {!collapsed && <span className="flex-1 text-left">设置</span>}
+          {!collapsed && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-medium leading-none">
+              Coming Soon
+            </span>
+          )}
         </button>
         <button
-          onClick={() => onNavigate("profile")}
-          className={cn(
-            "flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm transition-colors",
-            activeView === "profile"
-              ? "bg-primary/10 text-primary font-medium"
-              : "text-muted-foreground hover:bg-accent hover:text-foreground"
-          )}
+          disabled
+          className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-muted-foreground/50 cursor-not-allowed transition-colors"
         >
           <User className="h-4 w-4 shrink-0" />
-          {!collapsed && <span>个人中心</span>}
+          {!collapsed && <span className="flex-1 text-left">个人中心</span>}
+          {!collapsed && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-medium leading-none">
+              Coming Soon
+            </span>
+          )}
         </button>
       </div>
     </aside>
