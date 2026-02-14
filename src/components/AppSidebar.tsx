@@ -26,7 +26,7 @@ const navItems: { id: string; label: string; icon: any; disabled?: boolean; badg
   { id: "qa", label: "通用问答", icon: MessageSquare },
   { id: "chat", label: "AI 会话", icon: Sparkles, disabled: true, badge: "Coming Soon" },
   { id: "chat2", label: "AI 会话2", icon: MessageSquare },
-  { id: "chatEditor", label: "文档助手", icon: PenTool },
+  { id: "chatEditor", label: "写作助手", icon: PenTool },
   { id: "knowledge", label: "AI 智库", icon: BookOpen },
   { id: "creative", label: "创作工作台", icon: PenTool },
   { id: "dev", label: "开发工作台", icon: Code },
