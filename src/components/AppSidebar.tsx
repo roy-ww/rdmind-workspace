@@ -22,11 +22,11 @@ interface AppSidebarProps {
   onNavigate: (view: string) => void;
 }
 
-const navItems = [
+const navItems: { id: string; label: string; icon: any; disabled?: boolean; badge?: string }[] = [
   { id: "qa", label: "通用问答", icon: MessageSquare },
-  { id: "chat", label: "AI 会话", icon: Sparkles },
+  { id: "chat", label: "AI 会话", icon: Sparkles, disabled: true, badge: "Coming Soon" },
   { id: "chat2", label: "AI 会话2", icon: MessageSquare },
-  { id: "chatEditor", label: "会话编辑", icon: PenTool },
+  { id: "chatEditor", label: "文档助手", icon: PenTool },
   { id: "knowledge", label: "AI 智库", icon: BookOpen },
   { id: "creative", label: "创作工作台", icon: PenTool },
   { id: "dev", label: "开发工作台", icon: Code },
@@ -82,16 +82,26 @@ export function AppSidebar({ activeView, onNavigate }: AppSidebarProps) {
           return (
             <button
               key={item.id}
-              onClick={() => onNavigate(item.id)}
+              onClick={() => !item.disabled && onNavigate(item.id)}
+              disabled={item.disabled}
               className={cn(
                 "flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm transition-colors",
-                isActive
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                item.disabled
+                  ? "text-muted-foreground/50 cursor-not-allowed"
+                  : isActive
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
               )}
             >
               <item.icon className="h-4 w-4 shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
+              {!collapsed && (
+                <span className="flex-1 text-left">{item.label}</span>
+              )}
+              {!collapsed && item.badge && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-medium leading-none">
+                  {item.badge}
+                </span>
+              )}
             </button>
           );
         })}
