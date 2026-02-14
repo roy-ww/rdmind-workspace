@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import { FileText, ChevronRight, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 
 const sampleHtml = `<h1>项目规划与任务管理</h1>
@@ -144,25 +145,44 @@ export function MarkdownEditor({ fileName }: MarkdownEditorProps) {
             <span className="text-sm font-medium text-foreground">{fileName}</span>
           </div>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-1.5 text-xs"
-          onClick={() => {
-            const content = editorRef.current?.innerHTML || "";
-            const blob = new Blob([content], { type: "text/html;charset=utf-8" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = fileName.replace(/\.md$/, "") + ".reddoc";
-            a.click();
-            URL.revokeObjectURL(url);
-            toast({ title: "导出成功", description: `已导出 ${a.download}` });
-          }}
-        >
-          <Download className="h-3.5 w-3.5" />
-          导出 RedDoc
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+              <Download className="h-3.5 w-3.5" />
+              导出
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => {
+              const content = editorRef.current?.innerText || "";
+              const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = fileName.endsWith(".md") ? fileName : fileName + ".md";
+              a.click();
+              URL.revokeObjectURL(url);
+              toast({ title: "导出成功", description: `已导出 ${a.download}` });
+            }}>
+              <FileText className="h-4 w-4 mr-2" />
+              导出 MD 文件
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {
+              const content = editorRef.current?.innerHTML || "";
+              const blob = new Blob([content], { type: "text/html;charset=utf-8" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = fileName.replace(/\.md$/, "") + ".reddoc";
+              a.click();
+              URL.revokeObjectURL(url);
+              toast({ title: "导出成功", description: `已导出 ${a.download}` });
+            }}>
+              <Download className="h-4 w-4 mr-2" />
+              导出 RedDoc
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* WYSIWYG Editor - scrollable */}
