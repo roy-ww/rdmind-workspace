@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { FileText, ChevronRight, Download } from "lucide-react";
+import { FileText, ChevronRight, Download, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
@@ -178,7 +178,7 @@ export function MarkdownEditor({ fileName }: MarkdownEditorProps) {
               URL.revokeObjectURL(url);
               toast({ title: "导出成功", description: `已导出 ${a.download}` });
             }}>
-              <Download className="h-4 w-4 mr-2" />
+              <Globe className="h-4 w-4 mr-2" />
               导出 RedDoc
             </DropdownMenuItem>
           </DropdownMenuContent>
