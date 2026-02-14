@@ -1,5 +1,7 @@
 import { useState, useRef, useCallback } from "react";
-import { FileText, ChevronRight } from "lucide-react";
+import { FileText, ChevronRight, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 
 const sampleHtml = `<h1>项目规划与任务管理</h1>
 
@@ -129,17 +131,38 @@ export function MarkdownEditor({ fileName }: MarkdownEditorProps) {
   return (
     <div className="flex-1 flex flex-col min-h-0">
       {/* Top bar */}
-      <div className="px-4 py-2.5 border-b border-border flex items-center gap-2 shrink-0 bg-background">
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <span>docs_studio</span>
-          <ChevronRight className="h-3 w-3" />
-          <span>{folder}</span>
-          <ChevronRight className="h-3 w-3" />
+      <div className="px-4 py-2.5 border-b border-border flex items-center justify-between shrink-0 bg-background">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <span>docs_studio</span>
+            <ChevronRight className="h-3 w-3" />
+            <span>{folder}</span>
+            <ChevronRight className="h-3 w-3" />
+          </div>
+          <div className="flex items-center gap-1.5">
+            <FileText className="h-3.5 w-3.5 text-primary" />
+            <span className="text-sm font-medium text-foreground">{fileName}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <FileText className="h-3.5 w-3.5 text-primary" />
-          <span className="text-sm font-medium text-foreground">{fileName}</span>
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5 text-xs"
+          onClick={() => {
+            const content = editorRef.current?.innerHTML || "";
+            const blob = new Blob([content], { type: "text/html;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = fileName.replace(/\.md$/, "") + ".reddoc";
+            a.click();
+            URL.revokeObjectURL(url);
+            toast({ title: "导出成功", description: `已导出 ${a.download}` });
+          }}
+        >
+          <Download className="h-3.5 w-3.5" />
+          导出 RedDoc
+        </Button>
       </div>
 
       {/* WYSIWYG Editor - scrollable */}
