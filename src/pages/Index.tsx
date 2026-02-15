@@ -11,6 +11,7 @@ import { LabView } from "@/pages/LabView";
 import { LabChatView } from "@/pages/LabChatView";
 import { SettingsView } from "@/pages/SettingsView";
 import { ProfileView } from "@/pages/ProfileView";
+import { WishPoolView } from "@/pages/WishPoolView";
 
 const Index = () => {
   const [activeView, setActiveView] = useState("qa");
@@ -28,6 +29,7 @@ const Index = () => {
         {activeView === "lab" && <LabView />}
         {activeView === "labChat" && <LabChatView />}
         {activeView === "dev" && <DevWorkbenchView />}
+        {activeView === "wishpool" && <WishPoolView />}
         {activeView === "settings" && <SettingsView />}
         {activeView === "profile" && <ProfileView />}
       </main>
