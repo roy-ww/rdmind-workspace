@@ -8,6 +8,7 @@ import { AIChatView2 } from "@/pages/AIChatView2";
 import { ChatEditorView } from "@/pages/ChatEditorView";
 import { TroubleshootView } from "@/pages/TroubleshootView";
 import { LabView } from "@/pages/LabView";
+import { LabChatView } from "@/pages/LabChatView";
 import { SettingsView } from "@/pages/SettingsView";
 import { ProfileView } from "@/pages/ProfileView";
 
@@ -25,6 +26,7 @@ const Index = () => {
         {activeView === "troubleshoot" && <TroubleshootView />}
         {activeView === "knowledge" && <KnowledgeBaseView />}
         {activeView === "lab" && <LabView />}
+        {activeView === "labChat" && <LabChatView />}
         {activeView === "dev" && <DevWorkbenchView />}
         {activeView === "settings" && <SettingsView />}
         {activeView === "profile" && <ProfileView />}
