@@ -116,14 +116,9 @@ export function WishPoolView() {
       <div className="w-full max-w-3xl mx-auto px-6 py-8 flex flex-col gap-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md">
-              <Star className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">星愿池</h1>
-              <p className="text-xs text-muted-foreground">许下星愿，点亮未来 ✨</p>
-            </div>
+          <div>
+            <h1 className="text-xl font-bold text-foreground">星愿池</h1>
+            <p className="text-xs text-muted-foreground">许下星愿，点亮未来 ✨</p>
           </div>
           <Button
             onClick={() => setShowForm(!showForm)}
@@ -214,12 +209,7 @@ export function WishPoolView() {
           {filtered.map((item) => (
             <div
               key={item.id}
-              className={cn(
-                "rounded-xl border p-4 transition-colors",
-                item.type === "wish"
-                  ? "border-amber-200 bg-gradient-to-br from-amber-50/80 to-orange-50/60 dark:border-amber-800/40 dark:from-amber-950/20 dark:to-orange-950/10"
-                  : "border-border bg-card"
-              )}
+              className="rounded-xl border border-border bg-card p-4 transition-colors"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
