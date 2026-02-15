@@ -54,7 +54,7 @@ export function LabChatView() {
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center overflow-auto">
-      <div className="w-full max-w-3xl mx-auto px-6 flex flex-col gap-6">
+      <div className="w-full max-w-3xl mx-auto px-6 flex flex-col gap-10">
         {/* Lab Branding */}
         <div className="text-center space-y-1">
           <h1 className="text-3xl font-bold text-foreground tracking-tight">灵感源泉</h1>
