@@ -30,6 +30,7 @@ const navItems: { id: string; label: string; icon: any; disabled?: boolean; badg
   { id: "chatEditor", label: "写作助手", icon: PenTool },
   { id: "troubleshoot", label: "排障助手", icon: AlertCircle },
   { id: "knowledge", label: "AI 智库", icon: BookOpen },
+  { id: "lab", label: "RDMind 实验室", icon: Sparkles },
   { id: "creative", label: "创作工作台", icon: PenTool },
   { id: "dev", label: "开发工作台", icon: Code },
 ];
