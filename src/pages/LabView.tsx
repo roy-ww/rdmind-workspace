@@ -250,36 +250,6 @@ function LabCreateForm({ onBack }: { onBack: () => void }) {
           rows={5}
           className="bg-muted/50"
         />
-        <div className="flex items-center gap-1 mt-2">
-          <button className="p-1.5 rounded-md hover:bg-accent text-muted-foreground"><Undo className="h-4 w-4" /></button>
-          <button className="p-1.5 rounded-md hover:bg-accent text-muted-foreground"><Redo className="h-4 w-4" /></button>
-          <button className="p-1.5 rounded-md hover:bg-accent text-muted-foreground"><Eraser className="h-4 w-4" /></button>
-        </div>
-      </div>
-
-      {/* Default Tools */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-foreground">默认工具</label>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="h-3.5 w-3.5 text-muted-foreground" />
-              </TooltipTrigger>
-              <TooltipContent>选择实验室默认可用的工具</TooltipContent>
-            </Tooltip>
-          </div>
-          <Select defaultValue="none">
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="选择工具" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">没有默认工具</SelectItem>
-              <SelectItem value="search">搜索</SelectItem>
-              <SelectItem value="code">代码执行</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
       </div>
 
       {/* Knowledge */}
@@ -295,9 +265,23 @@ function LabCreateForm({ onBack }: { onBack: () => void }) {
         </div>
         <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-4 py-3">
           <span className="text-sm text-muted-foreground">添加文件，供你的实验室在对话中参考。</span>
-          <button className="p-1 rounded-md hover:bg-accent text-muted-foreground">
-            <Plus className="h-4 w-4" />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-1 rounded-md hover:bg-accent text-muted-foreground">
+                <Plus className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>
+                <Upload className="h-4 w-4 mr-2" />
+                上传文件
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <BookOpen className="h-4 w-4 mr-2" />
+                在线文档
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
