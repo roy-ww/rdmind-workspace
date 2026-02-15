@@ -196,19 +196,48 @@ function LabGallery({ onCreateNew }: { onCreateNew: () => void }) {
   );
 }
 
+const iconOptions = [
+  { id: "lightbulb", icon: Lightbulb, bg: "bg-amber-100 dark:bg-amber-900/30", color: "text-amber-600 dark:text-amber-400" },
+  { id: "briefcase", icon: Briefcase, bg: "bg-rose-100 dark:bg-rose-900/30", color: "text-rose-600 dark:text-rose-400" },
+  { id: "book", icon: BookOpen, bg: "bg-blue-100 dark:bg-blue-900/30", color: "text-blue-600 dark:text-blue-400" },
+  { id: "code", icon: Code, bg: "bg-cyan-100 dark:bg-cyan-900/30", color: "text-cyan-600 dark:text-cyan-400" },
+  { id: "graduation", icon: GraduationCap, bg: "bg-indigo-100 dark:bg-indigo-900/30", color: "text-indigo-600 dark:text-indigo-400" },
+  { id: "check", icon: CheckCircle, bg: "bg-purple-100 dark:bg-purple-900/30", color: "text-purple-600 dark:text-purple-400" },
+  { id: "edit", icon: Edit3, bg: "bg-green-100 dark:bg-green-900/30", color: "text-green-600 dark:text-green-400" },
+];
+
 function LabCreateForm({ onBack }: { onBack: () => void }) {
   const [name, setName] = useState("我的实验室");
   const [description, setDescription] = useState("");
   const [instruction, setInstruction] = useState("");
+  const [selectedIcon, setSelectedIcon] = useState(iconOptions[0]);
 
   return (
     <div className="flex-1 overflow-auto p-8 max-w-2xl mx-auto w-full">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-lg font-bold text-foreground">
-          我
+        <div className={`w-12 h-12 rounded-full ${selectedIcon.bg} flex items-center justify-center`}>
+          <selectedIcon.icon className={`h-5 w-5 ${selectedIcon.color}`} />
         </div>
-        <h1 className="text-xl font-bold text-foreground">我的实验室</h1>
+        <h1 className="text-xl font-bold text-foreground">{name || "我的实验室"}</h1>
+      </div>
+
+      {/* Icon Picker */}
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-foreground mb-2">图标</label>
+        <div className="flex items-center gap-2">
+          {iconOptions.map((opt) => (
+            <button
+              key={opt.id}
+              onClick={() => setSelectedIcon(opt)}
+              className={`w-10 h-10 rounded-full ${opt.bg} flex items-center justify-center transition-all ${
+                selectedIcon.id === opt.id ? "ring-2 ring-primary ring-offset-2 ring-offset-background" : "hover:opacity-80"
+              }`}
+            >
+              <opt.icon className={`h-4 w-4 ${opt.color}`} />
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Name */}
