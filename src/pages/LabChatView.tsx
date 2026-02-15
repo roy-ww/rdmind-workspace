@@ -56,16 +56,11 @@ export function LabChatView() {
     <div className="flex-1 flex flex-col items-center justify-center overflow-auto">
       <div className="w-full max-w-3xl mx-auto px-6 flex flex-col gap-6">
         {/* Lab Branding */}
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-14 h-14 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-            <Lightbulb className="h-7 w-7 text-amber-600 dark:text-amber-400" />
-          </div>
-          <div className="text-center space-y-1">
-            <h1 className="text-2xl font-bold text-foreground tracking-tight">灵感源泉</h1>
-            <p className="text-sm text-muted-foreground">
-              轻松获得海量灵感，包括派对活动、送礼、商务等方面的建议。
-            </p>
-          </div>
+        <div className="text-center space-y-1">
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">灵感源泉</h1>
+          <p className="text-sm text-muted-foreground">
+            轻松获得海量灵感，包括派对活动、送礼、商务等方面的建议。
+          </p>
         </div>
 
         {/* Chat Input */}
