@@ -13,10 +13,10 @@ import {
   ChevronUp,
   Sparkles,
   Info,
-  Undo,
-  Redo,
-  Eraser,
   Upload,
+  FileText,
+  FolderOpen,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -206,11 +206,18 @@ const iconOptions = [
   { id: "edit", icon: Edit3, bg: "bg-green-100 dark:bg-green-900/30", color: "text-green-600 dark:text-green-400" },
 ];
 
+interface KnowledgeItem {
+  id: string;
+  type: "paste" | "file" | "project";
+  name: string;
+}
+
 function LabCreateForm({ onBack }: { onBack: () => void }) {
   const [name, setName] = useState("我的实验室");
   const [description, setDescription] = useState("");
   const [instruction, setInstruction] = useState("");
   const [selectedIcon, setSelectedIcon] = useState(iconOptions[0]);
+  const [knowledgeItems, setKnowledgeItems] = useState<KnowledgeItem[]>([]);
 
   return (
     <div className="flex-1 overflow-auto p-8 max-w-2xl mx-auto w-full">
@@ -283,34 +290,81 @@ function LabCreateForm({ onBack }: { onBack: () => void }) {
 
       {/* Knowledge */}
       <div className="mb-8">
-        <div className="flex items-center gap-2 mb-2">
-          <label className="text-sm font-medium text-foreground">知识</label>
-          <Tooltip>
-            <TooltipTrigger>
-              <Info className="h-3.5 w-3.5 text-muted-foreground" />
-            </TooltipTrigger>
-            <TooltipContent>添加文件供实验室在对话中参考</TooltipContent>
-          </Tooltip>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium text-foreground">知识</label>
+            <Tooltip>
+              <TooltipTrigger>
+                <Info className="h-3.5 w-3.5 text-muted-foreground" />
+              </TooltipTrigger>
+              <TooltipContent>添加文件供实验室在对话中参考</TooltipContent>
+            </Tooltip>
+          </div>
         </div>
-        <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-4 py-3">
-          <span className="text-sm text-muted-foreground">添加文件，供你的实验室在对话中参考。</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="p-1 rounded-md hover:bg-accent text-muted-foreground">
-                <Plus className="h-4 w-4" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Upload className="h-4 w-4 mr-2" />
-                上传文件
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BookOpen className="h-4 w-4 mr-2" />
-                在线文档
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+
+        {/* Resource list */}
+        {knowledgeItems.length > 0 && (
+          <div className="rounded-lg border border-border divide-y divide-border mb-3">
+            {knowledgeItems.map((item) => (
+              <div key={item.id} className="flex items-center gap-3 px-4 py-2.5 group">
+                <div className="w-7 h-7 rounded-md bg-muted flex items-center justify-center shrink-0">
+                  {item.type === "file" && <Upload className="h-3.5 w-3.5 text-muted-foreground" />}
+                  {item.type === "paste" && <FileText className="h-3.5 w-3.5 text-muted-foreground" />}
+                  {item.type === "project" && <FolderOpen className="h-3.5 w-3.5 text-muted-foreground" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <span className="text-sm text-foreground truncate block">{item.name}</span>
+                  <span className="text-xs text-muted-foreground">{item.type === "file" ? "上传文件" : item.type === "paste" ? "粘贴文档" : "项目引用"}</span>
+                </div>
+                <button
+                  onClick={() => setKnowledgeItems((prev) => prev.filter((k) => k.id !== item.id))}
+                  className="p-1 rounded-md hover:bg-accent text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Add buttons */}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5 text-xs"
+            onClick={() => {
+              const name = `粘贴文档_${Date.now().toString(36)}`;
+              setKnowledgeItems((prev) => [...prev, { id: crypto.randomUUID(), type: "paste", name }]);
+            }}
+          >
+            <FileText className="h-3.5 w-3.5" />
+            粘贴文档
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5 text-xs"
+            onClick={() => {
+              const name = `文件_${Date.now().toString(36)}`;
+              setKnowledgeItems((prev) => [...prev, { id: crypto.randomUUID(), type: "file", name }]);
+            }}
+          >
+            <Upload className="h-3.5 w-3.5" />
+            上传文件
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5 text-xs"
+            onClick={() => {
+              const name = `项目_${Date.now().toString(36)}`;
+              setKnowledgeItems((prev) => [...prev, { id: crypto.randomUUID(), type: "project", name }]);
+            }}
+          >
+            <FolderOpen className="h-3.5 w-3.5" />
+            指定项目
+          </Button>
         </div>
       </div>
 
