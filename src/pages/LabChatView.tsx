@@ -15,11 +15,7 @@ export function LabChatView() {
 
   if (started) {
   return (
-      <div className="flex-1 flex flex-col min-h-0 h-screen relative">
-        {/* Beta Badge */}
-        <span className="absolute top-3 left-4 z-10 px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
-          Beta
-        </span>
+      <div className="flex-1 flex flex-col min-h-0 h-screen">
         {/* Lab Header */}
         <div className="shrink-0 border-b border-border bg-card px-6 py-4">
           <div className="flex items-center gap-3 max-w-3xl mx-auto w-full">
@@ -57,11 +53,7 @@ export function LabChatView() {
   }
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center overflow-auto relative">
-      {/* Beta Badge */}
-      <span className="absolute top-3 left-4 z-10 px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
-        Beta
-      </span>
+    <div className="flex-1 flex flex-col items-center justify-center overflow-auto">
       <div className="w-full max-w-3xl mx-auto px-6 flex flex-col gap-10">
         {/* Lab Branding */}
         <div className="text-center space-y-1">

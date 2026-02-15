@@ -53,7 +53,10 @@ export function AppSidebar({ activeView, onNavigate }: AppSidebarProps) {
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
             <div className="flex flex-col leading-none">
-              <span className="font-semibold text-foreground text-sm tracking-tight">星图</span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-semibold text-foreground text-sm tracking-tight">星图</span>
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wider bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 leading-none">Beta</span>
+              </div>
               <span className="text-[9px] text-muted-foreground">powered by RDMind</span>
             </div>
           </div>
