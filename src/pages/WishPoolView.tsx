@@ -118,7 +118,7 @@ export function WishPoolView() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-foreground">星愿池</h1>
-            <p className="text-xs text-muted-foreground">许下星愿，点亮未来 ✨</p>
+            <p className="text-xs text-muted-foreground">每个奇思妙想，都是星图进化的坐标 ✨</p>
           </div>
           <Button
             onClick={() => setShowForm(!showForm)}
