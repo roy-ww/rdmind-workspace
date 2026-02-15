@@ -8,6 +8,7 @@ import {
   AlertCircle,
   Plus,
   User,
+  Star,
   PanelLeftClose,
   PanelLeft,
   Sparkles,
@@ -34,6 +35,7 @@ const navItems: { id: string; label: string; icon: any; disabled?: boolean; badg
   { id: "labChat", label: "灵感源泉", icon: Sparkles },
   { id: "creative", label: "创作工作台", icon: PenTool },
   { id: "dev", label: "开发工作台", icon: Code },
+  { id: "wishpool", label: "星愿池", icon: Star },
 ];
 
 export function AppSidebar({ activeView, onNavigate }: AppSidebarProps) {
