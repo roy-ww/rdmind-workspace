@@ -122,6 +122,14 @@ export function AppSidebar({ activeView, onNavigate }: AppSidebarProps) {
 
       {/* Bottom */}
       <div className="px-3 pb-4 space-y-1 border-t border-border pt-3">
+        {/* Switch to Cloud */}
+        <button
+          onClick={() => navigate("/cloud")}
+          className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+        >
+          <Cloud className="h-4 w-4 shrink-0 text-blue-500" />
+          {!collapsed && <span className="flex-1 text-left">切换云端版</span>}
+        </button>
         <button
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
