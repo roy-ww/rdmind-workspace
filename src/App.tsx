@@ -5,7 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/hooks/use-theme";
 import Index from "./pages/Index";
+import CloudPlatform from "./pages/CloudPlatform";
+import PlatformSelect from "./pages/PlatformSelect";
 import NotFound from "./pages/NotFound";
+import "./styles/cloud-theme.css";
 
 const queryClient = new QueryClient();
 
