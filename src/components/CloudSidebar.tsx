@@ -42,6 +42,7 @@ const navItems = [
 export function CloudSidebar({ activeView, onNavigate }: CloudSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
 
   return (
     <aside
