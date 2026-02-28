@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   MessageSquare,
   BookOpen,
@@ -17,6 +18,7 @@ import {
   Zap,
   LayoutDashboard,
   ChevronRight,
+  Monitor,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/hooks/use-theme";
