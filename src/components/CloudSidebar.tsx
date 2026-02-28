@@ -45,12 +45,12 @@ export function CloudSidebar({ activeView, onNavigate }: CloudSidebarProps) {
     <aside
       className={cn(
         "flex flex-col h-screen transition-all duration-200 shrink-0",
-        "bg-[hsl(var(--sidebar-background))] border-r border-[hsl(var(--sidebar-border))]",
+        "bg-sidebar border-r border-sidebar-border",
         collapsed ? "w-16" : "w-60"
       )}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 h-14 border-b border-[hsl(var(--sidebar-border))]">
+      <div className="flex items-center justify-between px-4 h-14 border-b border-sidebar-border">
         {!collapsed && (
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg cloud-gradient-bg shadow-md">
@@ -58,14 +58,14 @@ export function CloudSidebar({ activeView, onNavigate }: CloudSidebarProps) {
             </div>
             <div className="flex flex-col leading-none">
               <div className="flex items-center gap-1.5">
-                <span className="font-semibold text-[hsl(var(--sidebar-foreground))] text-sm tracking-tight">
+                <span className="font-semibold text-sidebar-foreground text-sm tracking-tight">
                   星图云
                 </span>
                 <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wider bg-blue-500/20 text-blue-300 leading-none">
                   Cloud
                 </span>
               </div>
-              <span className="text-[9px] text-[hsl(var(--sidebar-foreground)/0.45)]">
+              <span className="text-[9px] text-sidebar-foreground/40">
                 powered by RDMind
               </span>
             </div>
@@ -73,7 +73,7 @@ export function CloudSidebar({ activeView, onNavigate }: CloudSidebarProps) {
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 rounded-md hover:bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-foreground)/0.5)] hover:text-[hsl(var(--sidebar-foreground))] transition-colors"
+          className="p-1.5 rounded-md hover:bg-sidebar-accent text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors"
         >
           {collapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
         </button>
@@ -105,11 +105,11 @@ export function CloudSidebar({ activeView, onNavigate }: CloudSidebarProps) {
               className={cn(
                 "flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm transition-all group",
                 isActive
-                  ? "bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-primary))] font-medium"
-                  : "text-[hsl(var(--sidebar-foreground)/0.6)] hover:bg-[hsl(var(--sidebar-accent))] hover:text-[hsl(var(--sidebar-foreground))]"
+                  ? "bg-sidebar-accent text-sidebar-primary font-medium"
+                  : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
               )}
             >
-              <item.icon className={cn("h-4 w-4 shrink-0", isActive && "text-[hsl(var(--sidebar-primary))]")} />
+              <item.icon className={cn("h-4 w-4 shrink-0", isActive && "text-sidebar-primary")} />
               {!collapsed && (
                 <>
                   <span className="flex-1 text-left">{item.label}</span>
@@ -122,23 +122,23 @@ export function CloudSidebar({ activeView, onNavigate }: CloudSidebarProps) {
       </nav>
 
       {/* Bottom */}
-      <div className="px-3 pb-4 space-y-0.5 border-t border-[hsl(var(--sidebar-border))] pt-3">
+      <div className="px-3 pb-4 space-y-0.5 border-t border-sidebar-border pt-3">
         <button
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-[hsl(var(--sidebar-foreground)/0.5)] hover:bg-[hsl(var(--sidebar-accent))] hover:text-[hsl(var(--sidebar-foreground))] transition-colors"
+          className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
         >
           {theme === "dark" ? <Sun className="h-4 w-4 shrink-0" /> : <Moon className="h-4 w-4 shrink-0" />}
           {!collapsed && <span>{theme === "dark" ? "浅色模式" : "深色模式"}</span>}
         </button>
         <button
           onClick={() => onNavigate("settings")}
-          className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-[hsl(var(--sidebar-foreground)/0.5)] hover:bg-[hsl(var(--sidebar-accent))] hover:text-[hsl(var(--sidebar-foreground))] transition-colors"
+          className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
         >
           <Settings className="h-4 w-4 shrink-0" />
           {!collapsed && <span>设置</span>}
         </button>
         <button
-          className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-[hsl(var(--sidebar-foreground)/0.5)] hover:bg-[hsl(var(--sidebar-accent))] hover:text-[hsl(var(--sidebar-foreground))] transition-colors"
+          className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
         >
           <User className="h-4 w-4 shrink-0" />
           {!collapsed && <span>个人中心</span>}
