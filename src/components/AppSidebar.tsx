@@ -43,6 +43,7 @@ const navItems: { id: string; label: string; icon: any; disabled?: boolean; badg
 export function AppSidebar({ activeView, onNavigate }: AppSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
 
   return (
     <aside
