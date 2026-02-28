@@ -126,6 +126,14 @@ export function CloudSidebar({ activeView, onNavigate }: CloudSidebarProps) {
 
       {/* Bottom */}
       <div className="px-3 pb-4 space-y-0.5 border-t border-sidebar-border pt-3">
+        {/* Switch to local */}
+        <button
+          onClick={() => navigate("/")}
+          className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
+        >
+          <Monitor className="h-4 w-4 shrink-0" />
+          {!collapsed && <span>切换本地版</span>}
+        </button>
         <button
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className="flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
