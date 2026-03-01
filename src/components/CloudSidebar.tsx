@@ -19,9 +19,24 @@ import {
   LayoutDashboard,
   ChevronRight,
   Monitor,
+  History,
+  Search,
+  X,
+  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/hooks/use-theme";
+
+const mockHistory = [
+  { id: "1", title: "总结本周项目进度", time: "10 分钟前", category: "智能问答" },
+  { id: "2", title: "API Gateway 代码审查", time: "2 小时前", category: "代码分析" },
+  { id: "3", title: "Q2 季度报告写作", time: "昨天", category: "写作助手" },
+  { id: "4", title: "数据库性能优化方案", time: "昨天", category: "排障助手" },
+  { id: "5", title: "用户权限系统设计", time: "2 天前", category: "智能问答" },
+  { id: "6", title: "前端性能瓶颈分析", time: "3 天前", category: "排障助手" },
+  { id: "7", title: "知识库内容整理", time: "上周", category: "AI 智库" },
+  { id: "8", title: "微服务架构迁移计划", time: "上周", category: "写作助手" },
+];
 
 interface CloudSidebarProps {
   activeView: string;
