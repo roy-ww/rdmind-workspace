@@ -121,7 +121,7 @@ export function CloudSidebar({ activeView, onNavigate }: CloudSidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-2 space-y-0.5 overflow-y-auto">
+      <nav className="px-3 py-2 space-y-0.5">
         {navItems.map((item) => {
           const isActive = activeView === item.id;
           return (
@@ -146,6 +146,83 @@ export function CloudSidebar({ activeView, onNavigate }: CloudSidebarProps) {
           );
         })}
       </nav>
+
+      {/* History Section */}
+      <div className="px-3 flex-1 overflow-hidden flex flex-col min-h-0">
+        <button
+          onClick={() => !collapsed && setHistoryOpen(!historyOpen)}
+          className={cn(
+            "flex items-center gap-3 w-full rounded-lg px-3 py-2 text-sm transition-all",
+            "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground",
+            historyOpen && "text-sidebar-foreground"
+          )}
+        >
+          <History className="h-4 w-4 shrink-0" />
+          {!collapsed && (
+            <>
+              <span className="flex-1 text-left">会话记录</span>
+              <ChevronDown
+                className={cn(
+                  "h-3 w-3 transition-transform duration-200",
+                  historyOpen && "rotate-180"
+                )}
+              />
+            </>
+          )}
+        </button>
+
+        {historyOpen && !collapsed && (
+          <div className="flex flex-col gap-1 overflow-hidden flex-1 min-h-0 pb-2">
+            {/* Search */}
+            <div className="relative mx-1">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-sidebar-foreground/40" />
+              <input
+                value={historySearch}
+                onChange={(e) => setHistorySearch(e.target.value)}
+                placeholder="搜索会话..."
+                className={cn(
+                  "w-full pl-7 pr-7 py-1.5 rounded-md text-xs",
+                  "bg-sidebar-accent/60 border border-sidebar-border",
+                  "text-sidebar-foreground placeholder:text-sidebar-foreground/30",
+                  "focus:outline-none focus:ring-1 focus:ring-sidebar-primary/40"
+                )}
+              />
+              {historySearch && (
+                <button
+                  onClick={() => setHistorySearch("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-sidebar-foreground/40 hover:text-sidebar-foreground"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+            </div>
+
+            {/* List */}
+            <div className="overflow-y-auto flex-1 space-y-0.5 pr-0.5">
+              {filteredHistory.length === 0 ? (
+                <p className="text-xs text-sidebar-foreground/30 text-center py-4">无匹配记录</p>
+              ) : (
+                filteredHistory.map((item) => (
+                  <button
+                    key={item.id}
+                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-sidebar-accent transition-colors group"
+                  >
+                    <div className="text-xs text-sidebar-foreground/80 truncate group-hover:text-sidebar-foreground">
+                      {item.title}
+                    </div>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="text-[10px] text-sidebar-foreground/30">{item.time}</span>
+                      <span className="text-[10px] text-sidebar-primary/50 bg-sidebar-primary/10 px-1 rounded">
+                        {item.category}
+                      </span>
+                    </div>
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Bottom */}
       <div className="px-3 pb-4 space-y-0.5 border-t border-sidebar-border pt-3">
