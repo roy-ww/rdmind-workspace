@@ -56,8 +56,16 @@ const navItems = [
 
 export function CloudSidebar({ activeView, onNavigate }: CloudSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historySearch, setHistorySearch] = useState("");
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
+
+  const filteredHistory = mockHistory.filter(
+    (h) =>
+      h.title.toLowerCase().includes(historySearch.toLowerCase()) ||
+      h.category.toLowerCase().includes(historySearch.toLowerCase())
+  );
 
   return (
     <aside
